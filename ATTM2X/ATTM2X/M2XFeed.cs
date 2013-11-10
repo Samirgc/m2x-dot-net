@@ -36,12 +36,12 @@ namespace ATTM2X
 			: base(apiKey, feedId)
 		{}
 
-		public object Details()
+		public dynamic Details()
 		{
 			return MakeRequest(String.Empty);
 		}
 
-		public object GetLocation()
+		public dynamic GetLocation()
 		{
 			return MakeRequest("/location");
 		}
@@ -57,7 +57,7 @@ namespace ATTM2X
 				                                              });
 		}
 
-		public object GetStreams()
+		public dynamic GetStreams()
 		{
 			return MakeRequest("/streams");
 		}
@@ -72,7 +72,7 @@ namespace ATTM2X
 			MakeRequest(String.Empty, M2XClientMethod.POST, data);
 		}
 
-		public object Log()
+		public dynamic Log()
 		{
 			return MakeRequest("/log");
 		}

@@ -24,7 +24,7 @@ namespace ATTM2X
 			get { return this.dataSourceId; }
 		}
 
-		public object Details()
+		public dynamic Details()
 		{
 			return MakeRequest(String.Empty);
 		}

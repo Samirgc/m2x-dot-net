@@ -29,12 +29,12 @@ namespace ATTM2X
 			MakeRequest(String.Empty, M2XClientMethod.PUT, data);
 		}
 
-		public object Details()
+		public dynamic Details()
 		{
 			return MakeRequest(String.Empty);
 		}
 
-		public object GetValues(DateTime? startDate = null, DateTime? endDate = null, int? limit = null)
+		public dynamic GetValues(DateTime? startDate = null, DateTime? endDate = null, int? limit = null)
 		{
 			return MakeRequest("/values", queryParams: new
 				                                          {

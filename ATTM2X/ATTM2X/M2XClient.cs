@@ -41,7 +41,7 @@ namespace ATTM2X
 		//Feeds:
 		//http://api-m2x.att.com/v1/feeds
 		//https://m2x.att.com/developer/documentation/feed
-		public object GetFeeds(string q = null, M2XFeedType? type = null, int? page = null, int? limit = null,
+		public dynamic GetFeeds(string q = null, M2XFeedType? type = null, int? page = null, int? limit = null,
 			double? latitude = null, double? longitude = null, double? distance = null, M2XFeedLocationDistanceUnitType? distanceUnit = null)
 		{
 			return MakeRequest("/feeds", queryParams: new 
@@ -65,7 +65,7 @@ namespace ATTM2X
 		//Blueprints:
 		//http://api-m2x.att.com/v1/blueprints
 		//https://m2x.att.com/developer/documentation/datasource#List-Blueprints
-		public object GetBlueprints()
+		public dynamic GetBlueprints()
 		{
 			return MakeRequest("/blueprints");
 		}
@@ -91,12 +91,12 @@ namespace ATTM2X
 		//Batches:
 		//http://api-m2x.att.com/v1/batches
 		//https://m2x.att.com/developer/documentation/datasource#List-Batches
-		public object GetBatches()
+		public dynamic GetBatches()
 		{
 			return MakeRequest("/batches");
 		}
 
-		public object CreateBatch(string name, M2XVisibility visibility, string description = null, string tags = null)
+		public dynamic CreateBatch(string name, M2XVisibility visibility, string description = null, string tags = null)
 		{
 			if (String.IsNullOrWhiteSpace(name))
 				throw new ArgumentException("Invalid Batch name - " + name);
@@ -117,12 +117,12 @@ namespace ATTM2X
 		//Data Sources:
 		//http://api-m2x.att.com/v1/datasources
 		//https://m2x.att.com/developer/documentation/datasource#List-Data-Sources
-		public object GetDataSources()
+		public dynamic GetDataSources()
 		{
 			return MakeRequest("/datasources");
 		}
 
-		public object CreateDataSource(string name, M2XVisibility visibility, string description = null, string tags = null)
+		public dynamic CreateDataSource(string name, M2XVisibility visibility, string description = null, string tags = null)
 		{
 			if (String.IsNullOrWhiteSpace(name))
 				throw new ArgumentException("Invalid Data source name - " + name);
@@ -143,12 +143,12 @@ namespace ATTM2X
 		//API Keys:
 		//http://api-m2x.att.com/v1/keys
 		//https://m2x.att.com/developer/documentation/keys
-		public object GetKeys(string feedId = null)
+		public dynamic GetKeys(string feedId = null)
 		{
 			return MakeRequest("/keys", queryParams: String.IsNullOrWhiteSpace(feedId) ? null : new { feed = feedId });
 		}
 
-		public object CreateKey(string name, IEnumerable<M2XClientMethod> permissions, string feedId = null, string streamName = null, DateTime? expiresAt = null)
+		public dynamic CreateKey(string name, IEnumerable<M2XClientMethod> permissions, string feedId = null, string streamName = null, DateTime? expiresAt = null)
 		{
 			if (String.IsNullOrWhiteSpace(name))
 				throw new ArgumentException("Invalid API Key name - " + name);

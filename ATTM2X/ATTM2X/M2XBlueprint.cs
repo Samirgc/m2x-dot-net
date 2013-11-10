@@ -24,7 +24,7 @@ namespace ATTM2X
 			get { return this.blueprintId; }
 		}
 
-		public object Details()
+		public dynamic Details()
 		{
 			return MakeRequest(String.Empty);
 		}

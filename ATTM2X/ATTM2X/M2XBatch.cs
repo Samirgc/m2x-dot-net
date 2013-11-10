@@ -24,7 +24,7 @@ namespace ATTM2X
 			get { return this.batchId; }
 		}
 
-		public object Details()
+		public dynamic Details()
 		{
 			return MakeRequest(String.Empty);
 		}
@@ -39,12 +39,12 @@ namespace ATTM2X
 				                                                });
 		}
 
-		public object GetDataSources()
+		public dynamic GetDataSources()
 		{
 			return MakeRequest("/datasources");
 		}
 
-		public object AddDataSource(string dataSourceSerialNumber)
+		public dynamic AddDataSource(string dataSourceSerialNumber)
 		{
 			return MakeRequest("/datasources", M2XClientMethod.POST, new { serial = dataSourceSerialNumber });
 		}

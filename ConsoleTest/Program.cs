@@ -12,7 +12,18 @@ namespace ConsoleTest
 	{
 		private static void Main(string[] args)
 		{
-			var m2x = new ATTM2X.M2XClient("8593b7e8dd4081e71e63d5422ae8b791");
+			if (args.Length == 0)
+			{
+				Console.WriteLine("Usage: ConsoleTest [APIKey]");
+				Console.ReadKey();
+				return;
+			}
+
+			Console.WriteLine("Press Any Key to start...");
+			Console.ReadKey();
+			Console.Clear();
+
+			var m2x = new ATTM2X.M2XClient(args[0]);
 
 /*			var keys = m2x.GetKeys();
 
@@ -22,14 +33,25 @@ namespace ConsoleTest
 
 			var blueprints = m2x.GetBlueprints();
 			*/
-//			var feeds = m2x.GetFeeds();
+			var feeds = m2x.GetFeeds();
+
+			if (feeds.feeds.Count == 0)
+			{
+				Console.WriteLine("No feeds found for the account provided. Create at least one feed first via UI - https://m2x.att.com/blueprints");
+				Console.ReadKey();
+				return;
+			}
+				
+			string feedId = feeds.feeds[0].id;
+
+			Console.WriteLine("Feed with id = " + feedId + " and name = " + feeds.feeds[0].name + " found.");
 
 //			feeds = m2x.GetFeeds(q: "DS1", latitude: -37.8, longitude: -57.54, distance: 100, distanceUnit: M2XFeedLocationDistanceUnitType.Miles);
 
 //			var ds = m2x.GetDataSources();
 
-			var feed = m2x.GetFeed("2423e3adc7f8fa5824a7fa311cbc415a");
-			feed.UpdateLocation(-37.9788423562422, -57.5478776916862, elevation: 100.12);
+			var feed = m2x.GetFeed(feedId);
+//			feed.UpdateLocation(-37.9788423562422, -57.5478776916862, elevation: 100.12);
 
 			var test = feed.Details();
 
@@ -50,16 +72,18 @@ namespace ConsoleTest
 			var v = s.GetValues();*/
 
 			var s1 = feed.GetStream("test1");
+			Console.WriteLine("Stream with name = test1 created.");
 			var s2 = feed.GetStream("test2");
+			Console.WriteLine("Stream with name = test2 created.");
 			var s3 = feed.GetStream("test3");
-			s1.Delete();
-			s2.Delete();
-			s3.Delete();
+			Console.WriteLine("Stream with name = test3 created.");
 			s1.CreateOrUpdate(new { unit = new { label = "random1", symbol = "R1" } });
 			s2.CreateOrUpdate(new { unit = new { label = "random2", symbol = "R2" } });
 			s3.CreateOrUpdate(new { unit = new { label = "random3", symbol = "R3" } });
 
 			var r = new Random(1000);
+
+			Console.WriteLine("Started posting values to all three streams. Go and check your feed on Web UI - https://m2x.att.com/blueprints. Press Ctrl+C to break.");
 
 			while(true)
 			{
