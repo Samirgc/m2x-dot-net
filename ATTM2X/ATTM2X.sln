@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ATTM2X", "ATTM2X\ATTM2X.csproj", "{26F18F63-C8C9-40B1-9839-79758065376F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleTest", "..\ConsoleTest\ConsoleTest.csproj", "{B6BBE577-8DF5-4B86-AB85-43ABB58640AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ATTM2X.Tests", "ATTM2X.Tests\ATTM2X.Tests.csproj", "{A0C789CF-710D-44C7-A41F-4BFEBA402DCD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{26F18F63-C8C9-40B1-9839-79758065376F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26F18F63-C8C9-40B1-9839-79758065376F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26F18F63-C8C9-40B1-9839-79758065376F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26F18F63-C8C9-40B1-9839-79758065376F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6BBE577-8DF5-4B86-AB85-43ABB58640AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6BBE577-8DF5-4B86-AB85-43ABB58640AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6BBE577-8DF5-4B86-AB85-43ABB58640AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6BBE577-8DF5-4B86-AB85-43ABB58640AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0C789CF-710D-44C7-A41F-4BFEBA402DCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0C789CF-710D-44C7-A41F-4BFEBA402DCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0C789CF-710D-44C7-A41F-4BFEBA402DCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0C789CF-710D-44C7-A41F-4BFEBA402DCD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
