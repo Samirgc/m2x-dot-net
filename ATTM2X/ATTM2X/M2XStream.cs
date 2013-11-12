@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Web;
+using System.Linq;
 
 namespace ATTM2X
 {
@@ -38,15 +40,18 @@ namespace ATTM2X
 		{
 			return MakeRequest("/values", queryParams: new
 				                                          {
-															  start = startDate, 
-															  end = endDate,
+															  start = DateTimeToString(startDate), 
+															  end = DateTimeToString(endDate),
 															  limit,
 				                                          });
 		}
 
-		public void PostValues(object data)
+		public void PostValues(IEnumerable<M2XPostedValue> postedValues)
 		{
-			MakeRequest("/values", M2XClientMethod.POST, data);
+			MakeRequest("/values", M2XClientMethod.POST, new
+			{
+				values = postedValues.Select(v => new { at = DateTimeToString(v.At), value = v.Value }).ToArray()
+			});
 		}
 
 		public void Delete()

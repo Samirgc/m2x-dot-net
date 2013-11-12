@@ -34,9 +34,9 @@ namespace ATTM2X
 			MakeRequest(String.Empty, M2XClientMethod.PUT, data);
 		}
 
-		public void Regenerate()
+		public dynamic Regenerate()
 		{
-			MakeRequest("/regenerate", M2XClientMethod.POST);
+			return MakeRequest("/regenerate", M2XClientMethod.POST);
 		}
 
 		public void Delete()

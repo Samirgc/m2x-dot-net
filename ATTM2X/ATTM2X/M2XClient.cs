@@ -7,27 +7,6 @@ using System.Linq;
 
 namespace ATTM2X
 {
-
-	public enum M2XVisibility
-	{
-		Public,
-		Private
-	}
-
-	public enum M2XFeedType
-	{
-		Blueprint, 
-		Batch,
-		DataSource
-	}
-
-	public enum M2XFeedLocationDistanceUnitType
-	{
-		Mi,
-		Miles,
-		Km
-	}
-
 	/// <summary>
 	/// Wrapper for AT&T M2X API v. 1.0
 	/// https://m2x.att.com/developer/documentation/overview
@@ -70,7 +49,8 @@ namespace ATTM2X
 			return MakeRequest("/blueprints");
 		}
 
-		public object CreateBlueprint(string name, M2XVisibility visibility, string description = null, string tags = null)
+		//TODO - find out why tags causes 500 error
+		public dynamic CreateBlueprint(string name, M2XVisibility visibility, string description = null)
 		{
 			if (String.IsNullOrWhiteSpace(name))
 				throw new ArgumentException("Invalid Blueprint name - " + name);
@@ -78,8 +58,7 @@ namespace ATTM2X
 			return MakeRequest("/blueprints", M2XClientMethod.POST, new {
 					                                                        name,
 																			visibility = visibility.ToString().ToLowerInvariant(),
-																			description,
-																			tags
+																			description
 				                                                        });
 		}
 
@@ -96,7 +75,8 @@ namespace ATTM2X
 			return MakeRequest("/batches");
 		}
 
-		public dynamic CreateBatch(string name, M2XVisibility visibility, string description = null, string tags = null)
+		//TODO - find out why tags causes 500 error
+		public dynamic CreateBatch(string name, M2XVisibility visibility, string description = null)
 		{
 			if (String.IsNullOrWhiteSpace(name))
 				throw new ArgumentException("Invalid Batch name - " + name);
@@ -104,8 +84,7 @@ namespace ATTM2X
 			return MakeRequest("/batches", M2XClientMethod.POST, new {
 					                                                    name,
 																		visibility = visibility.ToString().ToLowerInvariant(),
-																		description,
-																		tags
+																		description
 				                                                    });
 		}
 
@@ -122,7 +101,8 @@ namespace ATTM2X
 			return MakeRequest("/datasources");
 		}
 
-		public dynamic CreateDataSource(string name, M2XVisibility visibility, string description = null, string tags = null)
+		//TODO - find out why tags causes 500 error
+		public dynamic CreateDataSource(string name, M2XVisibility visibility, string description = null)
 		{
 			if (String.IsNullOrWhiteSpace(name))
 				throw new ArgumentException("Invalid Data source name - " + name);
@@ -130,8 +110,7 @@ namespace ATTM2X
 			return MakeRequest("/datasources", M2XClientMethod.POST, new {
 					                                                        name,
 																			visibility = visibility.ToString().ToLowerInvariant(),
-																			description,
-																			tags
+																			description
 				                                                        });
 		}
 

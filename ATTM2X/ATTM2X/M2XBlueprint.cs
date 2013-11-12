@@ -29,13 +29,12 @@ namespace ATTM2X
 			return MakeRequest(String.Empty);
 		}
 
-		public void Update(string name, M2XVisibility visibility, string description = null, string tags = null)
+		public void Update(string name, M2XVisibility visibility, string description = null)
 		{
 			MakeRequest(String.Empty, M2XClientMethod.PUT, new {
 					                                                name,
 																	visibility = visibility.ToString().ToLowerInvariant(),
-																	description,
-																	tags
+																	description
 				                                                });
 		}
 

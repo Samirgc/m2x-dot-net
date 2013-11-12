@@ -41,6 +41,7 @@ namespace ATTM2X
 			get { return this.code; }
 		}
 
+		//Example { "values": [ "Invalid timestamp: '2013-20-20'" ] }
 		public object ValidationErrors
 		{
 			get { return this.validationErrors;  }
@@ -144,7 +145,7 @@ namespace ATTM2X
 				{
 					return String.IsNullOrWhiteSpace(responseData) ? null : DynamicJsonConverter.Deserialize(responseData);
 				}
-				catch(ArgumentException ex)
+				catch(ArgumentException)
 				{
 					throw new M2XAPIException(url, (HttpStatusCode)0, "Invalid JSON response - " + responseData, null);
 				}
@@ -154,6 +155,15 @@ namespace ATTM2X
 		protected virtual string BuildUrl(string urlPath)
 		{
 			return EndPoint + urlPath;
+		}
+
+		protected string DateTimeToString(DateTime dateTime)
+		{
+			return dateTime.ToString("yyyy-MM-ddTHH:mm:ssZ");
+		}
+		protected string DateTimeToString(DateTime? dateTime)
+		{
+			return dateTime == null ? null : DateTimeToString(dateTime.Value);
 		}
 	}
 }

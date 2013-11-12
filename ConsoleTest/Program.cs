@@ -10,6 +10,185 @@ namespace ConsoleTest
 {
 	internal class Program
 	{
+		private static void DeleteKey(M2XClient m2x, string key)
+		{
+			M2XKey k = m2x.GetKey(key);
+			k.Delete();
+		}
+
+		private static void TestKeys(M2XClient m2x)
+		{
+			Console.WriteLine("Testing keys...");
+
+			var keys = m2x.GetKeys();
+			Console.WriteLine("Number of keys = " + keys.keys.Count);
+
+			var keyName = "test-" + Guid.NewGuid();
+			var keyData = m2x.CreateKey(keyName, new[] { M2XClientMethod.POST, M2XClientMethod.GET });
+			Console.WriteLine("New key created - id = " + keyData.key);
+
+			M2XKey key = m2x.GetKey(keyData.key);
+			Console.WriteLine("Key name = " + key.Details().name);
+
+			key = m2x.GetKey(key.Regenerate().key);
+			Console.WriteLine("Key regenerated. New id = " + key.Details().key);
+
+			key.Update(new { name = keyName + "updated", permissions = new[] { "POST", "GET" } });
+			Console.WriteLine("Key updated");
+
+			key.Delete();
+			Console.WriteLine("Key deleted");
+		}
+
+		private static void TestBlueprints(M2XClient m2x)
+		{
+			Console.WriteLine("Testing blueprints...");
+
+			var blueprints = m2x.GetBlueprints();
+			Console.WriteLine("Number of blueprints = " + blueprints.blueprints.Count);
+
+			var blueprintName = "test-" + Guid.NewGuid();
+			var blueprintData = m2x.CreateBlueprint(blueprintName, M2XVisibility.Public, "description");
+			Console.WriteLine("New blueprint created - id = " + blueprintData.id);
+			var key = blueprintData.key;
+
+			M2XBlueprint blueprint = m2x.GetBlueprint(blueprintData.id);
+			Console.WriteLine("Blueprint name = " + blueprint.Details().name);
+
+			blueprint.Update(blueprintName + "updated", M2XVisibility.Public);
+			Console.WriteLine("Blueprint updated");
+
+			blueprint.Delete();
+			Console.WriteLine("Blueprint deleted");
+			DeleteKey(m2x, key);
+		}
+
+		private static void TestBatches(M2XClient m2x)
+		{
+			Console.WriteLine("Testing batches...");
+
+			var batches = m2x.GetBatches();
+			Console.WriteLine("Number of batches = " + batches.batches.Count);
+
+			var batchName = "test-" + Guid.NewGuid();
+			var batchData = m2x.CreateBatch(batchName, M2XVisibility.Public, "description");
+			Console.WriteLine("New batch created - id = " + batchData.id);
+			var bKey = batchData.key;
+
+			M2XBatch batch = m2x.GetBatch(batchData.id);
+			Console.WriteLine("Batch name = " + batch.Details().name);
+
+			batch.Update(batchName + "updated", M2XVisibility.Public);
+			Console.WriteLine("Batch updated");
+
+			var dss = batch.GetDataSources();
+			Console.WriteLine("Number of data sources in the batch = " + dss.datasources.Count);
+
+			var dsSerial = "serial-" + Guid.NewGuid();
+			var dsData = batch.AddDataSource(dsSerial);
+			Console.WriteLine("New data source added - id = " + dsData.id);
+			var dsKey = dsData.key;
+
+			M2XDataSource ds = m2x.GetDataSource(dsData.id);
+			ds.Delete();
+			Console.WriteLine("Data source deleted");
+			DeleteKey(m2x, dsKey);
+
+			batch.Delete();
+			Console.WriteLine("Batch deleted");
+			DeleteKey(m2x, bKey);
+		}
+
+		private static void TestDatasources(M2XClient m2x)
+		{
+			Console.WriteLine("Testing data sources...");
+
+			var dss = m2x.GetDataSources();
+			Console.WriteLine("Number of data sources = " + dss.datasources.Count);
+
+			var dsName = "test-" + Guid.NewGuid();
+			var dsData = m2x.CreateDataSource(dsName, M2XVisibility.Public, "description");
+			Console.WriteLine("New data source created - id = " + dsData.id);
+			var key = dsData.key;
+
+			M2XDataSource ds = m2x.GetDataSource(dsData.id);
+			Console.WriteLine("Data source name = " + ds.Details().name);
+
+			ds.Update(dsName + "updated", M2XVisibility.Public);
+			Console.WriteLine("Data source updated");
+
+			ds.Delete();
+			Console.WriteLine("Data source deleted");
+
+			DeleteKey(m2x, key);
+		}
+
+		private static void TestFeeds(M2XClient m2x)
+		{
+			Console.WriteLine("Testing feeds...");
+
+			var feeds = m2x.GetFeeds();
+			Console.WriteLine("Number of feeds = " + feeds.feeds.Count);
+
+			feeds = m2x.GetFeeds(type: M2XFeedType.Blueprint);
+			Console.WriteLine("Number of blueprint feeds = " + feeds.feeds.Count);
+
+			var dsName = "test feed - " + Guid.NewGuid();
+			var dsData = m2x.CreateBlueprint(dsName, M2XVisibility.Public, "test feed");
+			Console.WriteLine("New blueprint feed created - id = " + dsData.id);
+			var key = dsData.key;
+			M2XBlueprint ds = m2x.GetBlueprint(dsData.id);
+			M2XFeed feed = m2x.GetFeed(dsData.id);
+
+			Console.WriteLine("Feed name = " + feed.Details().name);
+
+			feed.UpdateLocation(-37.9788423562422, -57.5478776916862, "test location", 500);
+			Console.WriteLine("Feed location updated");
+
+			var location = feed.GetLocation();
+			Console.WriteLine("Feed location obtained. latitude = " + location.latitude + "; longitude = " + location.longitude + "; elevation = " + location.elevation);
+
+			var s1 = feed.GetStream("test1");
+			var s2 = feed.GetStream("test2");
+			var s3 = feed.GetStream("test3");
+			s1.CreateOrUpdate(new { unit = new { label = "random1", symbol = "R1" } });
+			Console.WriteLine("Stream with name = test1 created.");
+			s2.CreateOrUpdate(new { unit = new { label = "random2", symbol = "R2" } });
+			Console.WriteLine("Stream with name = test2 created.");
+			s3.CreateOrUpdate(new { unit = new { label = "random3", symbol = "R3" } });
+			Console.WriteLine("Stream with name = test3 created.");
+
+			Console.WriteLine("Number of streams = " + feed.GetStreams().streams.Count);
+
+			Console.WriteLine("Started posting values to all three streams. Go ahead and check your feed on Web UI - https://m2x.att.com/blueprints. Press any key to break.");
+
+			var r = new Random(1000);
+
+			while (!Console.KeyAvailable)
+			{
+				s1.PostValues(new[] { new M2XPostedValue { At = DateTime.Now, Value = r.Next(100).ToString() } });
+				s2.PostValues(new[] { new M2XPostedValue { At = DateTime.Now, Value = r.Next(500).ToString() } });
+				s3.PostValues(new[] { new M2XPostedValue { At = DateTime.Now, Value = r.Next(1000).ToString() } });
+				Thread.Sleep(1000);
+			}
+			Console.WriteLine("Number of values in stream test1 = " + s1.GetValues().values.Count);
+			s1.Delete();
+			Console.WriteLine("Number of values in stream test2 = " + s2.GetValues().values.Count);
+			s2.Delete();
+			Console.WriteLine("Number of values in stream test3 = " + s3.GetValues().values.Count);
+			s3.Delete();
+			Console.WriteLine("Data streams deleted");
+			Console.WriteLine("Number of streams = " + feed.GetStreams().streams.Count);
+
+			Console.WriteLine("Number of records in log = " + feed.Log().requests.Count);
+
+			ds.Delete();
+			Console.WriteLine("Blueprint feed deleted");
+			DeleteKey(m2x, key);
+
+		}
+
+
 		private static void Main(string[] args)
 		{
 			if (args.Length == 0)
@@ -23,76 +202,17 @@ namespace ConsoleTest
 			Console.ReadKey();
 			Console.Clear();
 
-			var m2x = new ATTM2X.M2XClient(args[0]);
+			var m2x = new M2XClient(args[0]);
 
-/*			var keys = m2x.GetKeys();
-
-			var key = m2x.CreateKey("test", new[] { M2XClientMethod.POST, M2XClientMethod.GET });
-
-			keys = m2x.GetKeys();
-
-			var blueprints = m2x.GetBlueprints();
-			*/
-			var feeds = m2x.GetFeeds();
-
-			if (feeds.feeds.Count == 0)
-			{
-				Console.WriteLine("No feeds found for the account provided. Create at least one feed first via UI - https://m2x.att.com/blueprints");
-				Console.ReadKey();
-				return;
-			}
-				
-			string feedId = feeds.feeds[0].id;
-
-			Console.WriteLine("Feed with id = " + feedId + " and name = " + feeds.feeds[0].name + " found.");
-
-//			feeds = m2x.GetFeeds(q: "DS1", latitude: -37.8, longitude: -57.54, distance: 100, distanceUnit: M2XFeedLocationDistanceUnitType.Miles);
-
-//			var ds = m2x.GetDataSources();
-
-			var feed = m2x.GetFeed(feedId);
-//			feed.UpdateLocation(-37.9788423562422, -57.5478776916862, elevation: 100.12);
-
-			var test = feed.Details();
-
-			var logs = feed.Log();
-
-/*			var s = feed.GetStream("test_stream");
-
-			s.PostValues(new
-				             {
-					             values = new[]
-						                      {
-							                      new { at = "2013-09-09T19:15:00Z", value = "32" },
-												  new { at = "2013-09-09T20:15:00Z", value = "16" },
-												  new { at = "2013-09-09T21:10:00Z", value = "15" }
-						                      }
-				             });
-
-			var v = s.GetValues();*/
-
-			var s1 = feed.GetStream("test1");
-			Console.WriteLine("Stream with name = test1 created.");
-			var s2 = feed.GetStream("test2");
-			Console.WriteLine("Stream with name = test2 created.");
-			var s3 = feed.GetStream("test3");
-			Console.WriteLine("Stream with name = test3 created.");
-			s1.CreateOrUpdate(new { unit = new { label = "random1", symbol = "R1" } });
-			s2.CreateOrUpdate(new { unit = new { label = "random2", symbol = "R2" } });
-			s3.CreateOrUpdate(new { unit = new { label = "random3", symbol = "R3" } });
-
-			var r = new Random(1000);
-
-			Console.WriteLine("Started posting values to all three streams. Go and check your feed on Web UI - https://m2x.att.com/blueprints. Press Ctrl+C to break.");
-
-			while(true)
-			{
-				s1.PostValues( new { values = new[] { new { at = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ"), value = r.Next(100) }}});
-				s2.PostValues( new { values = new[] { new { at = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ"), value = r.Next(500) }}});
-				s3.PostValues( new { values = new[] { new { at = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ"), value = r.Next(1000) }}});
-				Thread.Sleep(1000);
-			}
-			
+			TestKeys(m2x);
+			Console.WriteLine();
+			TestBlueprints(m2x);
+			Console.WriteLine();
+			TestBatches(m2x);
+			Console.WriteLine();
+			TestDatasources(m2x);
+			Console.WriteLine();
+			TestFeeds(m2x);
 		}
 	}
 }
