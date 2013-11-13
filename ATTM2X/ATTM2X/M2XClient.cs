@@ -13,8 +13,8 @@ namespace ATTM2X
 	/// </summary>
 	public sealed class M2XClient : M2XClientBase
 	{
-		public M2XClient(string apiKey)
-			: base(apiKey)
+		public M2XClient(string apiKey, string m2xApiEndPoint = "http://api-m2x.att.com/v1")
+			: base(apiKey, m2xApiEndPoint)
 		{}
 
 		//Feeds:

@@ -50,16 +50,19 @@ namespace ATTM2X
 
 	public abstract class M2XClientBase
 	{
-		private const string EndPoint = "http://api-m2x.att.com/v1";
+		private readonly string endPoint;
 		private const string UserAgent = "m2x-dot-net-client";
 		private readonly string apiKey;
 
-		protected M2XClientBase(string apiKey)
+		protected M2XClientBase(string apiKey, string m2xApiEndPoint = "http://api-m2x.att.com/v1")
 		{
 			if (String.IsNullOrWhiteSpace(apiKey))
 				throw new ArgumentException("Invalid API key");
+			if (String.IsNullOrWhiteSpace(m2xApiEndPoint))
+				throw new ArgumentException("Invalid API end point url");
 
 			this.apiKey = apiKey;
+			endPoint = m2xApiEndPoint;
 		}
 
 		public string APIKey
@@ -154,7 +157,7 @@ namespace ATTM2X
 
 		protected virtual string BuildUrl(string urlPath)
 		{
-			return EndPoint + urlPath;
+			return endPoint + urlPath;
 		}
 
 		protected string DateTimeToString(DateTime dateTime)
