@@ -17,15 +17,15 @@ Please consult the [M2X glossary](https://m2x.att.com/developer/documentation/gl
 
 Installation and System Requirements
 ==========================
-The M2X API .NET Client library is a regular MS VS 2012 Class Library. The only dependency is .NET Framework version 4.5 which can be downloaded at the following address - http://www.microsoft.com/en-us/download/details.aspx?id=30653. 
+The M2X API .NET Client library is a regular MS VS 2012 Class Library. The only dependency is .NET Framework version 4.5 which can be downloaded:  http://www.microsoft.com/en-us/download/details.aspx?id=30653. 
 
-Just add it as an Existing Project into your VS solution or if you are using a different version of Visual Studio you can create a new class library project and include the content of [ATTM2X/ATTM2X](https://github.com/attm2x/m2x-dot-net/tree/master/ATTM2X/ATTM2X) folder into it. 
+Just add it as an Existing Project into your VS solution or if you are using a different version of Visual Studio you can create a new class library project and include the content of the [ATTM2X/ATTM2X](https://github.com/attm2x/m2x-dot-net/tree/master/ATTM2X/ATTM2X) folder into it. 
 Here is the list of additional references you will need to add in this case:
 
 * System.Web
 * System.Web.Extensions
 
-Besides the API Client library the solution also includes a console test app which contains multiple examples of library usage - see [ConsoleTest](https://github.com/attm2x/m2x-dot-net/tree/master/ConsoleTest) folder.
+Besides the API Client library, this solution also includes a console test app which contains multiple examples of library usage, which can be found here: [ConsoleTest](https://github.com/attm2x/m2x-dot-net/tree/master/ConsoleTest) folder.
 
 System requirements match those for .NET Framework 4.5.  
 
@@ -52,7 +52,7 @@ Library structure
 Currently, the client supports API v1 and all M2X API documents can be found at [M2X API Documentation](https://m2x.att.com/developer/documentation/overview).
 All classes are located within ATTM2X namespace.
 
-* [M2XClient](https://github.com/attm2x/m2x-dot-net/blob/master/ATTM2X/ATTM2X/M2XClient.cs) - this is the library's main entry point. In order to communicate with the M2X API you need an instance of this class. The constructor signature includes 2 parameters:
+* [M2XClient](https://github.com/attm2x/m2x-dot-net/blob/master/ATTM2X/ATTM2X/M2XClient.cs): This is the library's main entry point. In order to communicate with the M2X API you need an instance of this class. The constructor signature includes 2 parameters:
 
  apiKey - mandatory parameter. You can find it on your M2X [Account page](https://m2x.att.com/account#master-keys-tab)
 Read more about M2X API keys in the [API Keys](https://m2x.att.com/developer/documentation/overview#API-Keys) section of [M2X API Documentation](https://m2x.att.com/developer/documentation/overview).
@@ -67,7 +67,7 @@ Read more about M2X API keys in the [API Keys](https://m2x.att.com/developer/doc
 			var keys = client.GetKeys();
 			Console.WriteLine("Number of keys = " + keys.keys.Count);
 
- Also there are a number of methods allowing you to get an instance of individual API object by providing its id or name as a parameter:
+ There are also a number of methods allowing you to get an instance of individual API object by providing its id or name as a parameter:
 
  - Get an instance of a feed:
 
