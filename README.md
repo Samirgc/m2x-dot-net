@@ -15,9 +15,10 @@ Getting Started
 Please consult the [M2X glossary](https://m2x.att.com/developer/documentation/glossary) if you have questions about any M2X specific terms.
 
 
-Installation
+Installation and System Requirements
 ==========================
 The M2X API .NET Client library is a regular MS VS 2012 Class Library. The only dependency is .NET Framework version 4.5 which can be downloaded at the following address - http://www.microsoft.com/en-us/download/details.aspx?id=30653. 
+
 Just add it as an Existing Project into your VS solution or if you are using a different version of Visual Studio you can create a new class library project and include the content of [ATTM2X/ATTM2X](https://github.com/attm2x/m2x-dot-net/tree/master/ATTM2X/ATTM2X) folder into it. 
 Here is the list of additional references you will need to add in this case:
 
@@ -25,6 +26,25 @@ Here is the list of additional references you will need to add in this case:
 * System.Web.Extensions
 
 Besides the API Client library the solution also includes a console test app which contains multiple examples of library usage - see [ConsoleTest](https://github.com/attm2x/m2x-dot-net/tree/master/ConsoleTest) folder.
+
+System requirements match those for .NET Framework 4.5.  
+
+ - Supported Operating System:
+
+		Windows 7 Service Pack 1, Windows Server 2008 R2 SP1, Windows Server 2008 Service Pack 2, Windows Vista Service Pack 2
+		Windows Vista SP2 (x86 and x64)
+		Windows 7 SP1 (x86 and x64)
+		Windows Server 2008 R2 SP1 (x64)
+		Windows Server 2008 SP2 (x86 and x64)
+
+ - Hardware Requirements:
+
+		1 GHz or faster processor
+		512 MB of RAM
+		850 MB of available hard disk space (x86)
+		2 GB hard drive (x64)
+
+Note: Windows 8 and Windows Server 2012 include the .NET Framework 4.5. Therefore, you don't have to install this software on those operating systems.    
 
 Library structure 
 ==========================
