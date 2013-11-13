@@ -70,7 +70,7 @@ namespace ATTM2X
 			get { return this.apiKey; }
 		}
 
-		protected object MakeRequest(string url, M2XClientMethod method = M2XClientMethod.GET, object data = null, object queryParams = null)
+		protected dynamic MakeRequest(string url, M2XClientMethod method = M2XClientMethod.GET, object data = null, object queryParams = null)
 		{
 			string queryString = queryParams == null ? null : ObjectToQueryString(queryParams);
 			string fullUrl = BuildUrl(url) + (String.IsNullOrEmpty(queryString) ? "" : ("?" + queryString));

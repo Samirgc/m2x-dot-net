@@ -24,6 +24,11 @@ namespace ATTM2X
 			get { return this.batchId; }
 		}
 
+		public M2XFeed GetFeed()
+		{
+			return new M2XFeed(this.APIKey, this.BatchId);
+		}
+
 		public dynamic Details()
 		{
 			return MakeRequest(String.Empty);

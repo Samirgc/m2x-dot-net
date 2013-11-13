@@ -49,7 +49,6 @@ namespace ATTM2X
 			return MakeRequest("/blueprints");
 		}
 
-		//TODO - find out why tags causes 500 error
 		public dynamic CreateBlueprint(string name, M2XVisibility visibility, string description = null)
 		{
 			if (String.IsNullOrWhiteSpace(name))
@@ -75,7 +74,6 @@ namespace ATTM2X
 			return MakeRequest("/batches");
 		}
 
-		//TODO - find out why tags causes 500 error
 		public dynamic CreateBatch(string name, M2XVisibility visibility, string description = null)
 		{
 			if (String.IsNullOrWhiteSpace(name))
@@ -101,7 +99,6 @@ namespace ATTM2X
 			return MakeRequest("/datasources");
 		}
 
-		//TODO - find out why tags causes 500 error
 		public dynamic CreateDataSource(string name, M2XVisibility visibility, string description = null)
 		{
 			if (String.IsNullOrWhiteSpace(name))

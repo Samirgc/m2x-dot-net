@@ -24,6 +24,11 @@ namespace ATTM2X
 			get { return this.blueprintId; }
 		}
 
+		public M2XFeed GetFeed()
+		{
+			return new M2XFeed(this.APIKey, this.BlueprintId);
+		}
+
 		public dynamic Details()
 		{
 			return MakeRequest(String.Empty);

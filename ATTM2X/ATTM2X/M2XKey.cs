@@ -8,7 +8,7 @@ namespace ATTM2X
 	//https://m2x.att.com/developer/documentation/keys
 	public sealed class M2XKey : M2XClientBase
 	{
-		private readonly string keyId;
+		private string keyId;
 
 		internal M2XKey(string apiKey, string keyId)
 			: base(apiKey)
@@ -36,7 +36,9 @@ namespace ATTM2X
 
 		public dynamic Regenerate()
 		{
-			return MakeRequest("/regenerate", M2XClientMethod.POST);
+			var data = MakeRequest("/regenerate", M2XClientMethod.POST);
+			this.keyId = data.key;
+			return data;
 		}
 
 		public void Delete()

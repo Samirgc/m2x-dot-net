@@ -24,6 +24,11 @@ namespace ATTM2X
 			get { return this.dataSourceId; }
 		}
 
+		public M2XFeed GetFeed()
+		{
+			return new M2XFeed(this.APIKey, this.DataSourceId);
+		}
+
 		public dynamic Details()
 		{
 			return MakeRequest(String.Empty);

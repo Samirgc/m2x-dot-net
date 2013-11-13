@@ -30,7 +30,7 @@ namespace ConsoleTest
 			M2XKey key = m2x.GetKey(keyData.key);
 			Console.WriteLine("Key name = " + key.Details().name);
 
-			key = m2x.GetKey(key.Regenerate().key);
+			key.Regenerate();
 			Console.WriteLine("Key regenerated. New id = " + key.Details().key);
 
 			key.Update(new { name = keyName + "updated", permissions = new[] { "POST", "GET" } });
@@ -138,7 +138,7 @@ namespace ConsoleTest
 			Console.WriteLine("New blueprint feed created - id = " + dsData.id);
 			var key = dsData.key;
 			M2XBlueprint ds = m2x.GetBlueprint(dsData.id);
-			M2XFeed feed = m2x.GetFeed(dsData.id);
+			M2XFeed feed = ds.GetFeed();
 
 			Console.WriteLine("Feed name = " + feed.Details().name);
 
