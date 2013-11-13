@@ -167,7 +167,7 @@ Read more about M2X API keys in the [API Keys](https://m2x.att.com/developer/doc
 	Feeds creation is done when creating a DataSource, Blueprint or Batch.
 	Update and removal is not supported by the cloud API.
 
-	You can get a feed assiciated with a blueprint, a batch or a data source by calling GetFeed method of the corresponding class: M2XBlueprint, M2XBatch or M2XDataSource.
+	You can get a feed associated with a blueprint, a batch or a data source by calling GetFeed method of the corresponding class: M2XBlueprint, M2XBatch or M2XDataSource.
 
 			M2XFeed feed = dataSource.GetFeed();
 
@@ -227,6 +227,7 @@ Read more about M2X API keys in the [API Keys](https://m2x.att.com/developer/doc
  - StatusCode - HTTP status code.
  - ValidationErrors object - returned by some API methods. Contains additional error details.
  
+
  - Example. The following API response:
 
 			422 Unprocessable Entity
