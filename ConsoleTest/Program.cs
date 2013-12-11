@@ -166,9 +166,9 @@ namespace ConsoleTest
 
 			while (!Console.KeyAvailable)
 			{
-				s1.PostValues(new[] { new M2XPostedValue { At = DateTime.Now, Value = r.Next(100).ToString() } });
-				s2.PostValues(new[] { new M2XPostedValue { At = DateTime.Now, Value = r.Next(500).ToString() } });
-				s3.PostValues(new[] { new M2XPostedValue { At = DateTime.Now, Value = r.Next(1000).ToString() } });
+				s1.PostValues(new[] { new M2XPostedValue { At = DateTime.UtcNow, Value = r.Next(100).ToString() } });
+				s2.PostValues(new[] { new M2XPostedValue { At = DateTime.UtcNow, Value = r.Next(500).ToString() } });
+				s3.PostValues(new[] { new M2XPostedValue { At = DateTime.UtcNow, Value = r.Next(1000).ToString() } });
 				Thread.Sleep(1000);
 			}
 			Console.WriteLine("Number of values in stream test1 = " + s1.GetValues().values.Count);
