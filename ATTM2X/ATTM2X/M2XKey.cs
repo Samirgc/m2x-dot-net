@@ -3,52 +3,69 @@ using System.Web;
 
 namespace ATTM2X
 {
-	//API Keys:
-	//http://api-m2x.att.com/v1/keys
-	//https://m2x.att.com/developer/documentation/keys
-	public sealed class M2XKey : M2XClientBase
+	/// <summary>
+	/// Wrapper for AT&T M2X Keys API
+	/// https://m2x.att.com/developer/documentation/v2/keys
+	/// </summary>
+	public sealed class M2XKey : M2XClass
 	{
-		private string keyId;
+		public const string UrlPath = "/keys";
 
-		internal M2XKey(string apiKey, string keyId)
-			: base(apiKey)
+		public readonly string KeyId;
+
+		internal M2XKey(M2XClient client, string key)
+			: base(client)
 		{
-			if (String.IsNullOrWhiteSpace(keyId))
-				throw new ArgumentException("Invalid keyId - " + keyId);
+			if (String.IsNullOrWhiteSpace(key))
+				throw new ArgumentException(String.Format("Invalid key - {0}", key));
 
-			this.keyId = keyId;
+			this.KeyId = key;
 		}
 
-		public string KeyId
+		internal override string BuildPath(string path)
 		{
-			get { return this.keyId; }
+			return String.Concat(M2XKey.UrlPath, "/", HttpUtility.UrlPathEncode(this.KeyId), path);
 		}
 
-		public dynamic Details()
+		/// <summary>
+		/// Get details of a specific key associated with a developer account.
+		///
+		/// https://m2x.att.com/developer/documentation/v2/keys#View-Key-Details
+		/// </summary>
+		public M2XResponse Details()
 		{
-			return MakeRequest(String.Empty);
+			return MakeRequest();
 		}
 
-		public void Update(object data)
+		/// <summary>
+		/// Update name, stream, permissions, expiration date, origin or device access
+		/// of an existing key associated with the specified account.
+		///
+		/// https://m2x.att.com/developer/documentation/v2/keys#Update-Key
+		/// </summary>
+		public M2XResponse Update(object parms)
 		{
-			MakeRequest(String.Empty, M2XClientMethod.PUT, data);
+			return MakeRequest(null, M2XClientMethod.PUT, parms);
 		}
 
-		public dynamic Regenerate()
+		/// <summary>
+		/// Regenerate the specified key.
+		///
+		/// https://m2x.att.com/developer/documentation/v2/keys#Regenerate-Key
+		/// </summary>
+		public M2XResponse Regenerate()
 		{
-			var data = MakeRequest("/regenerate", M2XClientMethod.POST);
-			this.keyId = data.key;
-			return data;
+			return MakeRequest("/regenerate", M2XClientMethod.POST);
 		}
 
-		public void Delete()
+		/// <summary>
+		/// Delete an existing key.
+		///
+		/// https://m2x.att.com/developer/documentation/v2/keys#Delete-Key
+		/// </summary>
+		public M2XResponse Delete()
 		{
-			MakeRequest(String.Empty, M2XClientMethod.DELETE);
-		}
-
-		protected override string BuildUrl(string urlPath)
-		{
-			return base.BuildUrl("/keys/" + HttpUtility.UrlPathEncode(keyId) + urlPath);
+			return MakeRequest(null, M2XClientMethod.DELETE);
 		}
 	}
 }

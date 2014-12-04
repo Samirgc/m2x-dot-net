@@ -13,10 +13,7 @@ namespace ATTM2X
 	{
 		public static dynamic Deserialize(string json)
 		{
-			var serializer = new JavaScriptSerializer
-				                 {
-					                 MaxJsonLength = json.Length
-				                 };
+			var serializer = new JavaScriptSerializer { MaxJsonLength = json.Length };
 			serializer.RegisterConverters(new[] { new DynamicJsonConverter() });
 			return serializer.Deserialize(json, typeof(object));
 		}

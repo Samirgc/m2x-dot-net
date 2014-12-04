@@ -38,15 +38,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DynamicJsonConverter.cs" />
-    <Compile Include="Interface.cs" />
-    <Compile Include="M2XBatch.cs" />
-    <Compile Include="M2XBlueprint.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="M2XChart.cs" />
+    <Compile Include="M2XClass.cs" />
     <Compile Include="M2XClient.cs" />
-    <Compile Include="M2XClientBase.cs" />
-    <Compile Include="M2XDataSource.cs" />
-    <Compile Include="M2XFeed.cs" />
+    <Compile Include="M2XDevice.cs" />
+    <Compile Include="M2XDistribution.cs" />
     <Compile Include="M2XKey.cs" />
+    <Compile Include="M2XResponse.cs" />
     <Compile Include="M2XStream.cs" />
+    <Compile Include="M2XTrigger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
