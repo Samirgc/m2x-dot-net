@@ -194,24 +194,24 @@ namespace ConsoleTest
 
 		private static void TestDistributionAPI()
 		{
-			// destribution
+			// distribution
 
-			m2x.CreateDistribution(new { name = "TestDestribution-" + testId, visibility = M2XVisibility.Public });
+			m2x.CreateDistribution(new { name = "TestDistribution-" + testId, visibility = M2XVisibility.Public });
 			Console.WriteLine("CreateDistribution: {0}", m2x.LastResponse.Status);
-			string destributionId = m2x.LastResponse.Json.id;
-			Console.WriteLine("id: {0}", destributionId);
+			string distributionId = m2x.LastResponse.Json.id;
+			Console.WriteLine("id: {0}", distributionId);
 
 			m2x.Distributions();
 			Console.WriteLine("Distributions: {0}", m2x.LastResponse.Status);
 			Console.WriteLine("count: {0}", m2x.LastResponse.Json.distributions.Count);
 
-			var distribution = m2x.Distribution(destributionId);
+			var distribution = m2x.Distribution(distributionId);
 			distribution.Details();
 			Console.WriteLine("distribution.Details: {0}", m2x.LastResponse.Status);
 			Console.WriteLine("name: {0}", m2x.LastResponse.Json.name);
 			Console.WriteLine("devices: {0}", m2x.LastResponse.Json.devices.Count);
 
-			distribution.Update(new { name = "TestDestribution-" + testId, visibility = M2XVisibility.Private, description = "test" });
+			distribution.Update(new { name = "TestDistribution-" + testId, visibility = M2XVisibility.Private, description = "test" });
 			Console.WriteLine("distribution.Update: {0}", m2x.LastResponse.Status);
 
 			// device
@@ -365,7 +365,7 @@ namespace ConsoleTest
 			Console.WriteLine("chart.Details: {0}", m2x.LastResponse.Status);
 			Console.WriteLine("name: {0}", m2x.LastResponse.Json.name);
 
-			chart.Update(new { name = "testchart_" + testId, series = new[]
+			chart.Update(new { name = "testchart_" + testId, series = new []
 			{
 				new { device = device.DeviceId, stream = stream.StreamName }
 			}});

@@ -50,9 +50,9 @@ namespace ATTM2X
 		/// https://m2x.att.com/developer/documentation/v2/device#Create-Update-Data-Stream
 		/// https://m2x.att.com/developer/documentation/v2/distribution#Create-Update-Data-Stream
 		/// </summary>
-		public void CreateOrUpdate(object parms)
+		public M2XResponse CreateOrUpdate(object parms)
 		{
-			MakeRequest(null, M2XClientMethod.PUT, parms);
+			return MakeRequest(null, M2XClientMethod.PUT, parms);
 		}
 
 		/// <summary>
@@ -60,9 +60,9 @@ namespace ATTM2X
 		///
 		/// https://m2x.att.com/developer/documentation/v2/device#Update-Data-Stream-Value
 		/// </summary>
-		public void UpdateValue(object parms)
+		public M2XResponse UpdateValue(object parms)
 		{
-			MakeRequest("/value", M2XClientMethod.PUT, parms);
+			return MakeRequest("/value", M2XClientMethod.PUT, parms);
 		}
 
 		/// <summary>

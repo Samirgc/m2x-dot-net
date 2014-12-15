@@ -193,7 +193,7 @@ namespace ATTM2X
 
 		public M2XResponse MakeRequest(string path, M2XClientMethod method = M2XClientMethod.GET, object parms = null)
 		{
-			string fullUrl = BuildUrl(path, method == M2XClientMethod.GET ? parms : null);
+			string fullUrl = BuildUrl(path, method == M2XClientMethod.GET || method == M2XClientMethod.DELETE ? parms : null);
 			HttpWebRequest request = WebRequest.CreateHttp(fullUrl);
 			request.Method = method.ToString();
 			if (!String.IsNullOrEmpty(this.APIKey))
@@ -203,7 +203,7 @@ namespace ATTM2X
 
 			try
 			{
-				if (method != M2XClientMethod.GET)
+				if (method != M2XClientMethod.GET && method != M2XClientMethod.DELETE)
 				{
 					request.ContentType = "application/json";
 					if (parms == null)
