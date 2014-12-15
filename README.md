@@ -1,7 +1,7 @@
 AT&T's M2X .NET Client
 ========================
 
-[AT&T’s M2X](https://m2x.att.com/) is a cloud-based fully managed data storage service for network connected machine-to-machine (M2M) devices. From trucks and turbines to vending machines and freight containers, M2X enables the devices that power your business to connect and share valuable data.
+[AT&Tâ€™s M2X](https://m2x.att.com/) is a cloud-based fully managed data storage service for network connected machine-to-machine (M2M) devices. From trucks and turbines to vending machines and freight containers, M2X enables the devices that power your business to connect and share valuable data.
 This library aims to provide a simple wrapper to interact with the [AT&T M2X API](https://m2x.att.com/developer/documentation/overview). Refer to the [Glossary of Terms](https://m2x.att.com/developer/documentation/glossary) to understand the nomenclature used throughout this documentation.
 
 Getting Started
@@ -15,9 +15,9 @@ Getting Started
 Installation and System Requirements
 ==========================
 
-The M2X API .NET Client library is a regular MS VS 2012 Class Library. The only dependency is .NET Framework version 4.5 which can be downloaded:  http://www.microsoft.com/en-us/download/details.aspx?id=30653. 
+The M2X API .NET Client library is a regular MS VS 2012 Class Library. The only dependency is .NET Framework version 4.5 which can be downloaded here:  http://www.microsoft.com/en-us/download/details.aspx?id=30653. 
 
-Just add it as an Existing Project into your VS solution or if you are using a different version of Visual Studio you can create a new class library project and include the content of the [ATTM2X/ATTM2X](https://github.com/attm2x/m2x-dot-net/tree/master/ATTM2X/ATTM2X) folder into it. 
+Simply add it as an Existing Project into your VS solution or if you are using a different version of Visual Studio you can create a new class library project and include the content of the [ATTM2X/ATTM2X](https://github.com/attm2x/m2x-dot-net/tree/master/ATTM2X/ATTM2X) folder into it. 
 Here is the list of additional references you will need to add in this case:
 
 * System.Web
@@ -47,13 +47,13 @@ Note: Windows 8 and Windows Server 2012 include the .NET Framework 4.5. Therefor
 Library structure
 ==========================
 
-Currently, the client supports API v2 and all M2X API documents can be found at [M2X API Documentation](https://m2x.att.com/developer/documentation/overview).
+Currently, the client supports API v2 and all M2X API documents can be found at [M2X API Documentation](https://m2x.att.com/developer/documentation/v2/overview).
 All classes are located within ATTM2X namespace.
 
-* [M2XClient](https://github.com/attm2x/m2x-dot-net/blob/master/ATTM2X/ATTM2X/M2XClient.cs): This is the library's main entry point. In order to communicate with the M2X API you need an instance of this class. The constructor signature includes 2 parameters:
+* [M2XClient](https://github.com/attm2x/m2x-dot-net/blob/master/ATTM2X/ATTM2X/M2XClient.cs): This is the library's main entry point. In order to communicate with the M2X API you need an instance of this class. The constructor signature includes two (2) parameters:
 
- apiKey - mandatory parameter. You can find it on your M2X [Account page](https://m2x.att.com/account#master-keys-tab)
-Read more about M2X API keys in the [API Keys](https://m2x.att.com/developer/documentation/v2/overview#API-Keys) section of [M2X API Documentation](https://m2x.att.com/developer/documentation/v2/overview).
+ apiKey - mandatory parameter. You can find it in your M2X [Account page](https://m2x.att.com/account#master-keys-tab)
+Read more about M2X API keys in the [API Keys](https://m2x.att.com/developer/documentation/v2/overview#API-Keys) section of the [M2X API Documentation](https://m2x.att.com/developer/documentation/v2/overview).
 
  m2xApiEndPoint - optional parameter. You don't need to pass it unless you want to connect to a different API endpoint.
 
