@@ -15,15 +15,11 @@ Getting Started
 Installation and System Requirements
 ==========================
 
-The M2X API .NET Client library is a regular MS VS 2012 Class Library. The only dependency is .NET Framework version 4.5 which can be downloaded here:  http://www.microsoft.com/en-us/download/details.aspx?id=30653. 
+The M2X API .NET Client library is a regular MS VS 2012 Class Library portable for universal apps. The only dependency is .NET Framework version 4.5 which can be downloaded here:  http://www.microsoft.com/en-us/download/details.aspx?id=30653. 
 
 Simply add it as an Existing Project into your VS solution or if you are using a different version of Visual Studio you can create a new class library project and include the content of the [ATTM2X/ATTM2X](https://github.com/attm2x/m2x-dot-net/tree/master/ATTM2X/ATTM2X) folder into it. 
-Here is the list of additional references you will need to add in this case:
 
-* System.Web
-* System.Web.Extensions
-
-Besides the API Client library, this solution also includes a console test app which contains multiple examples of library usage, which can be found here: [ConsoleTest](https://github.com/attm2x/m2x-dot-net/tree/master/ConsoleTest) folder.
+Besides the API Client library, this solution also includes a tests project which contains multiple examples of library usage, which can be found here: [ATTM2X.Tests](https://github.com/attm2x/m2x-dot-net/tree/master/ATTM2X/ATTM2X.Tests) folder.
 
 System requirements match those for .NET Framework 4.5.
 
@@ -42,7 +38,7 @@ System requirements match those for .NET Framework 4.5.
 		850 MB of available hard disk space (x86)
 		2 GB hard drive (x64)
 
-Note: Windows 8 and Windows Server 2012 include the .NET Framework 4.5. Therefore, you don't have to install this software on those operating systems.    
+Note: Windows 8 and Windows Server 2012 include the .NET Framework 4.5. Therefore, you don't have to install this software on those operating systems.
 
 Library structure
 ==========================
@@ -62,16 +58,19 @@ Read more about M2X API keys in the [API Keys](https://m2x.att.com/developer/doc
  - Get the list of all your keys:
 
 			var client = new M2XClient("[API Key]");
-			var keys = client.Keys();
-			Console.WriteLine("Number of keys = " + keys.Json.keys.Count);
+			var response = client.Keys().Result;
+			var keys = response.Json<KeyList>();
+			Console.WriteLine("Number of keys = " + keys.keys.Count);
 
  There are also a number of methods allowing you to get an instance of individual API object by providing its id or name as a parameter:
 
  - Get an instance of a device:
 
 			M2XDevice device = client.Device("[Device id]");
-			var location = device.Location();
+			response = device.Location().Result;
+			var location = response.Json<LocationDetails>();
 
+ All M2X* classes are thread safe.
  Refer to the documentation on each class for further usage instructions.
 
 * [M2XResponse](https://github.com/attm2x/m2x-dot-net/blob/master/ATTM2X/ATTM2X/M2XResponse.cs)
@@ -82,16 +81,16 @@ Read more about M2X API keys in the [API Keys](https://m2x.att.com/developer/doc
 
  This file contains all enumerable values that can be used in the API calls.
 
-ConsoleTest application
+* [Classes](https://github.com/attm2x/m2x-dot-net/blob/master/ATTM2X/ATTM2X/Classes)
+
+ This folder contains the most classes for parameters to be used and received within the API calls.
+
+Tests project
 ==========================
 
- The [console test application](https://github.com/attm2x/m2x-dot-net/blob/master/ConsoleTest/Program.cs) included into ATTM2X solution has a lot of examples for the most of M2X API methods.
+ The [ATTM2X.Tests](https://github.com/attm2x/m2x-dot-net/blob/master/ATTM2X/ATTM2X.Tests/M2XClientTests.cs) included into ATTM2X solution has a lot of examples for the most of M2X API methods.
 
- Usage:
-
-		ConsoleTest.exe [APIKey]
-
- Replace [APIKey] with Master Key of your M2X account.
+ In order to run these tests you should put Master Key of your M2X account into [configuration file](https://github.com/attm2x/m2x-dot-net/blob/master/ATTM2X/ATTM2X.Tests/App.config).
 
 Versioning
 ==========================

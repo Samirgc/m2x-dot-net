@@ -1,5 +1,7 @@
 using System;
-using System.Web;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ATTM2X
 {
@@ -24,28 +26,7 @@ namespace ATTM2X
 
 		internal override string BuildPath(string path)
 		{
-			return String.Concat(M2XKey.UrlPath, "/", HttpUtility.UrlPathEncode(this.KeyId), path);
-		}
-
-		/// <summary>
-		/// Get details of a specific key associated with a developer account.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/keys#View-Key-Details
-		/// </summary>
-		public M2XResponse Details()
-		{
-			return MakeRequest();
-		}
-
-		/// <summary>
-		/// Update name, stream, permissions, expiration date, origin or device access
-		/// of an existing key associated with the specified account.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/keys#Update-Key
-		/// </summary>
-		public M2XResponse Update(object parms)
-		{
-			return MakeRequest(null, M2XClientMethod.PUT, parms);
+			return String.Concat(M2XKey.UrlPath, "/", WebUtility.UrlEncode(this.KeyId), path);
 		}
 
 		/// <summary>
@@ -53,19 +34,18 @@ namespace ATTM2X
 		///
 		/// https://m2x.att.com/developer/documentation/v2/keys#Regenerate-Key
 		/// </summary>
-		public M2XResponse Regenerate()
+		public Task<M2XResponse> Regenerate()
 		{
 			return MakeRequest("/regenerate", M2XClientMethod.POST);
 		}
-
 		/// <summary>
-		/// Delete an existing key.
+		/// Regenerate the specified key.
 		///
-		/// https://m2x.att.com/developer/documentation/v2/keys#Delete-Key
+		/// https://m2x.att.com/developer/documentation/v2/keys#Regenerate-Key
 		/// </summary>
-		public M2XResponse Delete()
+		public Task<M2XResponse> Regenerate(CancellationToken cancellationToken)
 		{
-			return MakeRequest(null, M2XClientMethod.DELETE);
+			return MakeRequest(cancellationToken, "/regenerate", M2XClientMethod.POST);
 		}
 	}
 }

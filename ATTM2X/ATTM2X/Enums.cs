@@ -38,7 +38,7 @@ namespace ATTM2X
 		public const string Sum = "sum";
 	}
 
-	public static class M2XTriggerStatus
+	public static class M2XStatus
 	{
 		public const string Enabled = "enabled";
 		public const string Disabled = "disabled";

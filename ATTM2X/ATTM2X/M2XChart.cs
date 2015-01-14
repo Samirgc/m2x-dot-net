@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Web;
+using System.Net;
 
 namespace ATTM2X
 {
@@ -24,40 +24,7 @@ namespace ATTM2X
 
 		internal override string BuildPath(string path)
 		{
-			return String.Concat(M2XChart.UrlPath, "/", HttpUtility.UrlPathEncode(this.ChartId), path);
-		}
-
-		/// <summary>
-		/// Get details of a specific chart.
-		///
-		/// This method is public and therefore it does not require
-		/// the user to authenticate himself using an API key.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/charts#View-Chart-Details
-		/// </summary>
-		public M2XResponse Details()
-		{
-			return MakeRequest();
-		}
-
-		/// <summary>
-		/// Update an existing chart.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/charts#Update-Chart
-		/// </summary>
-		public M2XResponse Update(object parms)
-		{
-			return MakeRequest(null, M2XClientMethod.PUT, parms);
-		}
-
-		/// <summary>
-		/// Delete an existing chart.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/charts#Delete-Chart
-		/// </summary>
-		public M2XResponse Delete()
-		{
-			return MakeRequest(null, M2XClientMethod.DELETE);
+			return String.Concat(M2XChart.UrlPath, "/", WebUtility.UrlEncode(this.ChartId), path);
 		}
 
 		/// <summary>

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Runtime.Serialization.Json;
 using System.Text;
 
 namespace ATTM2X
@@ -17,53 +20,42 @@ namespace ATTM2X
 		/// <summary>
 		/// The HTTP method of API call
 		/// </summary>
-		public readonly string RequestMethod;
-		/// <summary>
-		/// The headers of API call
-		/// </summary>
-		public readonly WebHeaderCollection RequestHeaders;
+		public readonly M2XClientMethod RequestMethod;
 		/// <summary>
 		/// The text of API call
 		/// </summary>
 		public readonly string RequestContent;
+
 		/// <summary>
 		/// The exception occured during API call
 		/// </summary>
-		public readonly WebException WebError;
+		public Exception WebError { get; internal set; }
 
 		/// <summary>
 		/// The status code of the response.
 		/// </summary>
-		public readonly HttpStatusCode Status;
+		public HttpStatusCode Status { get; internal set; }
 		/// <summary>
 		/// The headers included on the response.
 		/// </summary>
-		public readonly WebHeaderCollection Headers;
+		public HttpResponseHeaders Headers { get; internal set; }
 		/// <summary>
 		/// The raw response body.
 		/// </summary>
-		public readonly string Raw;
+		public string Raw { get; internal set; }
 
-		private dynamic json;
 		/// <summary>
 		/// The parsed response body.
 		/// </summary>
-		public dynamic Json
+		public T Json<T>() where T: class
 		{
-			get
+			if (String.IsNullOrWhiteSpace(this.Raw))
+				return null;
+			byte[] bytes = Encoding.UTF8.GetBytes(this.Raw);
+			var serializer = new DataContractJsonSerializer(typeof(T));
+			using (var stream = new MemoryStream(bytes))
 			{
-				if (this.json != null)
-					return this.json;
-				if (String.IsNullOrWhiteSpace(this.Raw))
-					return null;
-				try
-				{
-					this.json = DynamicJsonConverter.Deserialize(this.Raw);
-				}
-				catch (ArgumentException)
-				{
-				}
-				return this.json;
+				return (T)serializer.ReadObject(stream);
 			}
 		}
 
@@ -96,26 +88,25 @@ namespace ATTM2X
 			get { return this.ClientError || this.ServerError; }
 		}
 
-		internal M2XResponse(HttpWebRequest request, string requestContent, WebException error, HttpWebResponse response)
+		internal M2XResponse(Uri url, M2XClientMethod method, string content)
 		{
-			this.RequestUri = request.RequestUri;
-			this.RequestMethod = request.Method;
-			this.RequestHeaders = request.Headers;
-			this.RequestContent = requestContent;
-			this.WebError = error;
+			this.RequestUri = url;
+			this.RequestMethod = method;
+			this.RequestContent = content;
+		}
 
-			if (response == null)
-				return;
+		internal HttpContent GetContent()
+		{
+			return this.RequestContent == null ? null :
+				new StringContent(this.RequestContent, Encoding.UTF8, "application/json");
+		}
 
-			this.Status = response.StatusCode;
-			this.Headers = response.Headers;
-
-			Stream stream = response.GetResponseStream();
-			if (stream != null)
-			{
-				using (var reader = new StreamReader(stream, Encoding.UTF8))
-					this.Raw = reader.ReadToEnd();
-			}
+		internal async void SetResponse(HttpResponseMessage responseMessage)
+		{
+			this.Status = responseMessage.StatusCode;
+			this.Headers = responseMessage.Headers;
+			if (responseMessage.Content != null)
+				this.Raw = await responseMessage.Content.ReadAsStringAsync();
 		}
 	}
 }

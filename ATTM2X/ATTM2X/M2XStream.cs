@@ -1,5 +1,7 @@
 using System;
-using System.Web;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ATTM2X
 {
@@ -37,22 +39,10 @@ namespace ATTM2X
 
 		internal override string BuildPath(string path)
 		{
-			path = String.Concat(M2XStream.UrlPath, "/", HttpUtility.UrlPathEncode(this.StreamName), path);
+			path = String.Concat(M2XStream.UrlPath, "/", WebUtility.UrlEncode(this.StreamName), path);
 			return this.Device == null
 				? this.Distribution.BuildPath(path)
 				: this.Device.BuildPath(path);
-		}
-
-		/// <summary>
-		/// Update a data stream associated with the Device or specified distribution
-		/// (if a stream with this name does not exist it gets created).
-		///
-		/// https://m2x.att.com/developer/documentation/v2/device#Create-Update-Data-Stream
-		/// https://m2x.att.com/developer/documentation/v2/distribution#Create-Update-Data-Stream
-		/// </summary>
-		public M2XResponse CreateOrUpdate(object parms)
-		{
-			return MakeRequest(null, M2XClientMethod.PUT, parms);
 		}
 
 		/// <summary>
@@ -60,20 +50,18 @@ namespace ATTM2X
 		///
 		/// https://m2x.att.com/developer/documentation/v2/device#Update-Data-Stream-Value
 		/// </summary>
-		public M2XResponse UpdateValue(object parms)
+		public Task<M2XResponse> UpdateValue(object parms)
 		{
 			return MakeRequest("/value", M2XClientMethod.PUT, parms);
 		}
-
 		/// <summary>
-		/// Get details of a specific data Stream associated with an existing device or distribution.
+		/// Update the current value of the stream.
 		///
-		/// https://m2x.att.com/developer/documentation/v2/device#View-Data-Stream
-		/// https://m2x.att.com/developer/documentation/v2/distribution#View-Data-Stream
+		/// https://m2x.att.com/developer/documentation/v2/device#Update-Data-Stream-Value
 		/// </summary>
-		public M2XResponse Details()
+		public Task<M2XResponse> UpdateValue(CancellationToken cancellationToken, object parms)
 		{
-			return MakeRequest();
+			return MakeRequest(cancellationToken, "/value", M2XClientMethod.PUT, parms);
 		}
 
 		/// <summary>
@@ -82,9 +70,19 @@ namespace ATTM2X
 		///
 		/// https://m2x.att.com/developer/documentation/v2/device#List-Data-Stream-Values
 		/// </summary>
-		public M2XResponse Values(object parms = null)
+		public Task<M2XResponse> Values(object parms = null)
 		{
 			return MakeRequest("/values", M2XClientMethod.GET, parms);
+		}
+		/// <summary>
+		/// List values from the stream, sorted in reverse chronological order
+		/// (most recent values first).
+		///
+		/// https://m2x.att.com/developer/documentation/v2/device#List-Data-Stream-Values
+		/// </summary>
+		public Task<M2XResponse> Values(CancellationToken cancellationToken, object parms = null)
+		{
+			return MakeRequest(cancellationToken, "/values", M2XClientMethod.GET, parms);
 		}
 
 		/// <summary>
@@ -95,9 +93,21 @@ namespace ATTM2X
 		///
 		/// https://m2x.att.com/developer/documentation/v2/device#Data-Stream-Sampling
 		/// </summary>
-		public M2XResponse Sampling(object parms)
+		public Task<M2XResponse> Sampling(object parms)
 		{
 			return MakeRequest("/sampling", M2XClientMethod.GET, parms);
+		}
+		/// <summary>
+		/// Sample values from the stream, sorted in reverse chronological order
+		/// (most recent values first).
+		///
+		/// This method only works for numeric streams
+		///
+		/// https://m2x.att.com/developer/documentation/v2/device#Data-Stream-Sampling
+		/// </summary>
+		public Task<M2XResponse> Sampling(CancellationToken cancellationToken, object parms)
+		{
+			return MakeRequest(cancellationToken, "/sampling", M2XClientMethod.GET, parms);
 		}
 
 		/// <summary>
@@ -108,27 +118,40 @@ namespace ATTM2X
 		///
 		/// https://m2x.att.com/developer/documentation/v2/device#Data-Stream-Stats
 		/// </summary>
-		public M2XResponse Stats(object parms = null)
+		public Task<M2XResponse> Stats(object parms = null)
 		{
 			return MakeRequest("/stats", M2XClientMethod.GET, parms);
 		}
+		/// <summary>
+		/// Return count, min, max, average and standard deviation stats for the
+		/// values of the stream.
+		///
+		/// This method only works for numeric streams
+		///
+		/// https://m2x.att.com/developer/documentation/v2/device#Data-Stream-Stats
+		/// </summary>
+		public Task<M2XResponse> Stats(CancellationToken cancellationToken, object parms = null)
+		{
+			return MakeRequest(cancellationToken, "/stats", M2XClientMethod.GET, parms);
+		}
 
 		/// <summary>
-		/// Post multiple values to the stream
-		///
-		/// The 'values' parameter is an array with the following format:
-		///
-		///  [
-		///    { "timestamp": <Time in ISO8601>, "value": x },
-		///    { "timestamp": <Time in ISO8601>, "value": y },
-		///    [ ... ]
-		///  ]
+		/// Post timestamped values to an existing data stream.
 		///
 		/// https://m2x.att.com/developer/documentation/v2/device#Post-Data-Stream-Values
 		/// </summary>
-		public M2XResponse PostValues(object values)
+		public Task<M2XResponse> PostValues(object parms)
 		{
-			return MakeRequest("/values", M2XClientMethod.POST, new { values });
+			return MakeRequest("/values", M2XClientMethod.POST, parms);
+		}
+		/// <summary>
+		/// Post timestamped values to an existing data stream.
+		///
+		/// https://m2x.att.com/developer/documentation/v2/device#Post-Data-Stream-Values
+		/// </summary>
+		public Task<M2XResponse> PostValues(CancellationToken cancellationToken, object parms)
+		{
+			return MakeRequest(cancellationToken, "/values", M2XClientMethod.POST, parms);
 		}
 
 		/// <summary>
@@ -136,20 +159,18 @@ namespace ATTM2X
 		///
 		/// https://m2x.com/developer/documentation/v2/device#Delete-Data-Stream-Values
 		/// </summary>
-		public M2XResponse DeleteValues(object parms)
+		public Task<M2XResponse> DeleteValues(object parms)
 		{
 			return MakeRequest("/values", M2XClientMethod.DELETE, parms);
 		}
-
 		/// <summary>
-		/// Delete an existing data stream associated with a specific device or distribution.
+		/// Delete values in a stream by a date range
 		///
-		/// https://m2x.att.com/developer/documentation/v2/device#Delete-Data-Stream
-		/// https://m2x.att.com/developer/documentation/v2/distribution#Delete-Data-Stream
+		/// https://m2x.com/developer/documentation/v2/device#Delete-Data-Stream-Values
 		/// </summary>
-		public M2XResponse Delete()
+		public Task<M2XResponse> DeleteValues(CancellationToken cancellationToken, object parms)
 		{
-			return MakeRequest(null, M2XClientMethod.DELETE);
+			return MakeRequest(cancellationToken, "/values", M2XClientMethod.DELETE, parms);
 		}
 	}
 }
