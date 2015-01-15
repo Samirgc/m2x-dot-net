@@ -15,9 +15,12 @@ Getting Started
 Installation and System Requirements
 ==========================
 
-The M2X API .NET Client library is a regular MS VS 2012 Class Library portable for universal apps. The only dependency is .NET Framework version 4.5 which can be downloaded here:  http://www.microsoft.com/en-us/download/details.aspx?id=30653. 
+The M2X API .NET Client library is a Portable Class Library. Visual Studio support for the Portable Class Library depends on the version of Visual Studio you're using.
+In some cases, you'll have everything you need, and in other cases, you'll need to install additional items, as shown in the following table: http://msdn.microsoft.com/en-us/library/gg597391(v=vs.110).aspx.
 
-Simply add it as an Existing Project into your VS solution or if you are using a different version of Visual Studio you can create a new class library project and include the content of the [ATTM2X/ATTM2X](https://github.com/attm2x/m2x-dot-net/tree/master/ATTM2X/ATTM2X) folder into it. 
+Another dependency is .NET Framework version 4.5 which can be downloaded here: http://www.microsoft.com/en-us/download/details.aspx?id=30653. 
+
+Simply add it as an Existing Project into your VS solution or if you are using a different version of Visual Studio you can create a new class library project and include the content of the [ATTM2X/ATTM2X](https://github.com/attm2x/m2x-dot-net/tree/master/ATTM2X/ATTM2X) folder into it.
 
 Besides the API Client library, this solution also includes a tests project which contains multiple examples of library usage, which can be found here: [ATTM2X.Tests](https://github.com/attm2x/m2x-dot-net/tree/master/ATTM2X/ATTM2X.Tests) folder.
 
@@ -30,6 +33,8 @@ System requirements match those for .NET Framework 4.5.
 		Windows 7 SP1 (x86 and x64)
 		Windows Server 2008 R2 SP1 (x64)
 		Windows Server 2008 SP2 (x86 and x64)
+		Windows 8.x, Windows Server 2012
+		Windows Phone 8.1
 
  - Hardware Requirements:
 
@@ -40,13 +45,22 @@ System requirements match those for .NET Framework 4.5.
 
 Note: Windows 8 and Windows Server 2012 include the .NET Framework 4.5. Therefore, you don't have to install this software on those operating systems.
 
+By default, the library project targets the following platforms:
+		.NET Framework 4.5
+		Windows 8
+		Windows Phone 8.1
+
+The project only references assemblies that are supported by those platforms.
+To add or remove target platforms, in Solution Explorer, right-click ATTM2X Library project name, and select Properties then on Library tab in Targeting section click Change.
+
 Library structure
 ==========================
 
 Currently, the client supports API v2 and all M2X API documents can be found at [M2X API Documentation](https://m2x.att.com/developer/documentation/v2/overview).
-All classes are located within ATTM2X namespace.
+All classes are located within ATTM2X namespace. All methods of M2X* classes are thread safe.
 
-* [M2XClient](https://github.com/attm2x/m2x-dot-net/blob/master/ATTM2X/ATTM2X/M2XClient.cs): This is the library's main entry point. In order to communicate with the M2X API you need an instance of this class. The constructor signature includes two (2) parameters:
+* [M2XClient](https://github.com/attm2x/m2x-dot-net/blob/master/ATTM2X/ATTM2X/M2XClient.cs): This is the library's main entry point.
+In order to communicate with the M2X API you need an instance of this class. The constructor signature includes two (2) parameters:
 
  apiKey - mandatory parameter. You can find it in your M2X [Account page](https://m2x.att.com/account#master-keys-tab)
 Read more about M2X API keys in the [API Keys](https://m2x.att.com/developer/documentation/v2/overview#API-Keys) section of the [M2X API Documentation](https://m2x.att.com/developer/documentation/v2/overview).
@@ -54,23 +68,7 @@ Read more about M2X API keys in the [API Keys](https://m2x.att.com/developer/doc
  m2xApiEndPoint - optional parameter. You don't need to pass it unless you want to connect to a different API endpoint.
 
  Client class provides access to API calls returning lists of the following API objects: devices, distributions, keys, charts.
-
- - Get the list of all your keys:
-
-			var client = new M2XClient("[API Key]");
-			var response = client.Keys().Result;
-			var keys = response.Json<KeyList>();
-			Console.WriteLine("Number of keys = " + keys.keys.Count);
-
- There are also a number of methods allowing you to get an instance of individual API object by providing its id or name as a parameter:
-
- - Get an instance of a device:
-
-			M2XDevice device = client.Device("[Device id]");
-			response = device.Location().Result;
-			var location = response.Json<LocationDetails>();
-
- All M2X* classes are thread safe.
+ There are also a number of methods allowing you to get an instance of individual API object by providing its id or name as a parameter.
  Refer to the documentation on each class for further usage instructions.
 
 * [M2XResponse](https://github.com/attm2x/m2x-dot-net/blob/master/ATTM2X/ATTM2X/M2XResponse.cs)
@@ -83,7 +81,50 @@ Read more about M2X API keys in the [API Keys](https://m2x.att.com/developer/doc
 
 * [Classes](https://github.com/attm2x/m2x-dot-net/blob/master/ATTM2X/ATTM2X/Classes)
 
- This folder contains the most classes for parameters to be used and received within the API calls.
+ This folder contains the most classes for parameters that can be used within the API calls.
+
+Example
+==========================
+
+ - Create a client instance:
+
+		using ATTM2X;
+
+		M2XClient client = new M2XClient("[API Key]");
+
+ - Get the list of all your keys:
+
+		using ATTM2X.Classes;
+
+		M2XResponse response = client.Keys().Result;
+		var keyList = response.Json<KeyList>();
+		Console.WriteLine("Number of keys is " + keyList.keys.Length);
+
+ - Get an instance of a device and its location details:
+
+		M2XDevice device = client.Device("[Device id]");
+		response = device.Location().Result;
+		var location = response.Json<LocationDetails>();
+		Console.WriteLine("Location name is " + location.name);
+
+ - Create a new device, stream and put current value into it:
+
+ 		response = m2x.CreateDevice(new DeviceParams
+		{
+			name = "[Device name]",
+			visibility = M2XVisibility.Public,
+		}).Result;
+		var deviceDetails = response.Json<DeviceDetails>();
+		device = m2x.Device(deviceDetails.id);
+
+		M2XStream stream = device.Stream("[Stream name]");
+		response = stream.Update(new StreamParams
+		{
+			type = M2XStreamType.Numeric,
+			unit = new StreamUnit { label = "points", symbol = "pt" },
+		}).Result;
+
+		response = stream.UpdateValue(new StreamValue { value = "10" }).Result;
 
 Tests project
 ==========================
@@ -103,6 +144,9 @@ PATCH will increment with backwards-compatible bug fixes.
 Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
 
 Note: the client version does not necessarily reflect the version used in the AT&T M2X API.
+
+2.0.0 version of the library is server only.
+2.1.0 version is universal/portable.
 
 License
 ==========================
