@@ -15,14 +15,14 @@ Getting Started
 Installation and System Requirements
 ==========================
 
-The M2X API .NET Client library is a Portable Class Library. Visual Studio support for the Portable Class Library depends on the version of Visual Studio you're using.
-In some cases, you'll have everything you need, and in other cases, you'll need to install additional items, as shown in the following table: http://msdn.microsoft.com/en-us/library/gg597391(v=vs.110).aspx.
+The M2X .NET Client library is a Portable Class Library. Visual Studio support for the Portable Class Library depends on the version of Visual Studio that you are using.
+In some cases, you'll have everything you need, and in other cases, you'll need to install additional items, as shown in the table available here: http://msdn.microsoft.com/en-us/library/gg597391(v=vs.110).aspx.
 
-Another dependency is .NET Framework version 4.5 which can be downloaded here: http://www.microsoft.com/en-us/download/details.aspx?id=30653. 
+You will also need .NET Framework version 4.5, which can be downloaded here: http://www.microsoft.com/en-us/download/details.aspx?id=30653. 
 
-Simply add it as an Existing Project into your VS solution or if you are using a different version of Visual Studio you can create a new class library project and include the content of the [ATTM2X/ATTM2X](https://github.com/attm2x/m2x-dot-net/tree/master/ATTM2X/ATTM2X) folder into it.
+To begin, simple add the M2X .NET client library as an Existing Project into your VS solution or if you are using a different version of Visual Studio you can create a new class library project and include the content of the [ATTM2X/ATTM2X](https://github.com/attm2x/m2x-dot-net/tree/master/ATTM2X/ATTM2X) folder in it.
 
-Besides the API Client library, this solution also includes a tests project which contains multiple examples of library usage, which can be found here: [ATTM2X.Tests](https://github.com/attm2x/m2x-dot-net/tree/master/ATTM2X/ATTM2X.Tests) folder.
+Besides the M2X .NET Client library, this solution also includes a tests project which contains multiple examples of library usage, which can be found here: [ATTM2X.Tests](https://github.com/attm2x/m2x-dot-net/tree/master/ATTM2X/ATTM2X.Tests) folder.
 
 System requirements match those for .NET Framework 4.5.
 
@@ -43,21 +43,21 @@ System requirements match those for .NET Framework 4.5.
 		850 MB of available hard disk space (x86)
 		2 GB hard drive (x64)
 
-Note: Windows 8 and Windows Server 2012 include the .NET Framework 4.5. Therefore, you don't have to install this software on those operating systems.
+Note: Windows 8 and Windows Server 2012 include the .NET Framework 4.5. Therefore, you don't have to install it if you are using those operating systems.
 
-By default, the library project targets the following platforms:
+By default, this library targets the following platforms:
 		.NET Framework 4.5
 		Windows 8
 		Windows Phone 8.1
 
-The project only references assemblies that are supported by those platforms.
-To add or remove target platforms, in Solution Explorer, right-click ATTM2X Library project name, and select Properties then on Library tab in Targeting section click Change.
+The client library only references assemblies that are supported by those platforms.
+To add or remove target platforms, in Solution Explorer, right-click the ATTM2X Library project name, and select ```Properties``` then in the Library tab in the Targeting section click ```Change```.
 
 Library structure
 ==========================
 
-Currently, the client supports API v2 and all M2X API documents can be found at [M2X API Documentation](https://m2x.att.com/developer/documentation/v2/overview).
-All classes are located within ATTM2X namespace. All methods of M2X* classes are thread safe.
+Currently, this client supports M2X API v2. All M2X API documents can be found here: [M2X API Documentation](https://m2x.att.com/developer/documentation/v2/overview).
+All classes are located within the ATTM2X namespace. All methods of M2X* classes are thread safe.
 
 * [M2XClient](https://github.com/attm2x/m2x-dot-net/blob/master/ATTM2X/ATTM2X/M2XClient.cs): This is the library's main entry point.
 In order to communicate with the M2X API you need an instance of this class. The constructor signature includes two (2) parameters:
@@ -68,7 +68,7 @@ Read more about M2X API keys in the [API Keys](https://m2x.att.com/developer/doc
  m2xApiEndPoint - optional parameter. You don't need to pass it unless you want to connect to a different API endpoint.
 
  Client class provides access to API calls returning lists of the following API objects: devices, distributions, keys, charts.
- There are also a number of methods allowing you to get an instance of individual API object by providing its id or name as a parameter.
+ There are also a number of methods allowing you to get an instance of an individual API object by providing its id or name as a parameter.
  Refer to the documentation on each class for further usage instructions.
 
 * [M2XResponse](https://github.com/attm2x/m2x-dot-net/blob/master/ATTM2X/ATTM2X/M2XResponse.cs)
@@ -81,7 +81,7 @@ Read more about M2X API keys in the [API Keys](https://m2x.att.com/developer/doc
 
 * [Classes](https://github.com/attm2x/m2x-dot-net/blob/master/ATTM2X/ATTM2X/Classes)
 
- This folder contains the most classes for parameters that can be used within the API calls.
+ This folder contains most classes for parameters that can be used within the API calls.
 
 Example
 ==========================
@@ -129,9 +129,9 @@ Example
 Tests project
 ==========================
 
- The [ATTM2X.Tests](https://github.com/attm2x/m2x-dot-net/blob/master/ATTM2X/ATTM2X.Tests/M2XClientTests.cs) included into ATTM2X solution has a lot of examples for the most of M2X API methods.
+The [ATTM2X.Tests](https://github.com/attm2x/m2x-dot-net/blob/master/ATTM2X/ATTM2X.Tests/M2XClientTests.cs) included in the ATTM2X solution have examples for most M2X API methods.
 
- In order to run these tests you should put Master Key of your M2X account into [configuration file](https://github.com/attm2x/m2x-dot-net/blob/master/ATTM2X/ATTM2X.Tests/App.config).
+ In order to run these tests you should place your M2X Account Master API Key into the [configuration file](https://github.com/attm2x/m2x-dot-net/blob/master/ATTM2X/ATTM2X.Tests/App.config).
 
 Versioning
 ==========================
