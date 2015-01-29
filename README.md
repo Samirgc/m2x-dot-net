@@ -3,7 +3,7 @@ AT&T's M2X .NET Client
 
 [AT&T M2X](http://m2x.att.com) is a cloud-based fully managed time-series data storage service for network connected machine-to-machine (M2M) devices and the Internet of Things (IoT). 
 
-The [AT&T M2X API](https://m2x.att.com/developer/documentation/v2/overview) provides all the needed operations and methods to connect your devices to AT&T's M2X service. This library aims to provide a simple wrapper to interact with the AT&T M2X API for [.NET](http://www.microsoft.com/net). Refer to the [Glossary of Terms](https://m2x.att.com/developer/documentation/v2/glossary) to understand the nomenclature used throughout this documentation.
+The [AT&T M2X API](https://m2x.att.com/developer/documentation/overview) provides all the needed operations and methods to connect your devices to AT&T's M2X service. This library aims to provide a simple wrapper to interact with the AT&T M2X API for [.NET](http://www.microsoft.com/net). Refer to the [Glossary of Terms](https://m2x.att.com/developer/documentation/glossary) to understand the nomenclature used throughout this documentation.
 
 Getting Started
 ==========================
@@ -57,14 +57,14 @@ To add or remove target platforms, in Solution Explorer, right-click the ATTM2X 
 Library structure
 ==========================
 
-Currently, this client supports M2X API v2. All M2X API documents can be found here: [M2X API Documentation](https://m2x.att.com/developer/documentation/v2/overview).
+Currently, this client supports M2X API v2. All M2X API documents can be found here: [M2X API Documentation](https://m2x.att.com/developer/documentation/overview).
 All classes are located within the ATTM2X namespace. All methods of M2X* classes are thread safe.
 
 * [M2XClient](https://github.com/attm2x/m2x-dot-net/blob/master/ATTM2X/ATTM2X/M2XClient.cs): This is the library's main entry point.
 In order to communicate with the M2X API you need an instance of this class. The constructor signature includes two (2) parameters:
 
  apiKey - mandatory parameter. You can find it in your M2X [Account page](https://m2x.att.com/account#master-keys-tab)
-Read more about M2X API keys in the [API Keys](https://m2x.att.com/developer/documentation/v2/overview#API-Keys) section of the [M2X API Documentation](https://m2x.att.com/developer/documentation/v2/overview).
+Read more about M2X API keys in the [API Keys](https://m2x.att.com/developer/documentation/overview#API-Keys) section of the [M2X API Documentation](https://m2x.att.com/developer/documentation/overview).
 
  m2xApiEndPoint - optional parameter. You don't need to pass it unless you want to connect to a different API endpoint.
 
