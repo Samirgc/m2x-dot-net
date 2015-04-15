@@ -23,7 +23,7 @@ namespace ATTM2X.Tests
 		{
 			// device
 
-			response = m2x.DeviceGroups().Result;
+			response = m2x.DeviceTags().Result;
 			Assert.IsNotNull(m2x.LastResponse);
 			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
 			Assert.IsTrue(response.Success);

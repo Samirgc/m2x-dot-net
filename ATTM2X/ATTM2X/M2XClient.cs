@@ -117,24 +117,24 @@ namespace ATTM2X
 		}
 
 		/// <summary>
-		/// List Device Groups
-		/// Retrieve the list of device groups for the authenticated user.
+		/// List Device Tags
+		/// Retrieve the list of device tags for the authenticated user.
 		///
-		/// https://m2x.att.com/developer/documentation/v2/device#List-Device-Groups
+		/// https://m2x.att.com/developer/documentation/v2/device#List-Device-Tags
 		/// </summary>
-		public Task<M2XResponse> DeviceGroups(object parms = null)
+		public Task<M2XResponse> DeviceTags(object parms = null)
 		{
-			return MakeRequest(M2XDevice.UrlPath + "/groups", M2XClientMethod.GET, parms);
+			return MakeRequest(M2XDevice.UrlPath + "/tags", M2XClientMethod.GET, parms);
 		}
 		/// <summary>
-		/// List Device Groups
-		/// Retrieve the list of device groups for the authenticated user.
+		/// List Device Tags
+		/// Retrieve the list of device tags for the authenticated user.
 		///
-		/// https://m2x.att.com/developer/documentation/v2/device#List-Device-Groups
+		/// https://m2x.att.com/developer/documentation/v2/device#List-Device-Tags
 		/// </summary>
-		public Task<M2XResponse> DeviceGroups(CancellationToken cancellationToken, object parms = null)
+		public Task<M2XResponse> DeviceTags(CancellationToken cancellationToken, object parms = null)
 		{
-			return MakeRequest(cancellationToken, M2XDevice.UrlPath + "/groups", M2XClientMethod.GET, parms);
+			return MakeRequest(cancellationToken, M2XDevice.UrlPath + "/tags", M2XClientMethod.GET, parms);
 		}
 
 		/// <summary>

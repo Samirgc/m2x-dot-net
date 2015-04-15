@@ -16,7 +16,7 @@ namespace ATTM2X.Classes
 		public string visibility;
 		public string status;
 		public string serial;
-		public string[] groups;
+		public string[] tags;
 		public string url;
 		public LocationDetails location;
 		public string created;
@@ -47,7 +47,7 @@ namespace ATTM2X.Classes
 		[DataMember]
 		public string visibility;
 		[DataMember(EmitDefaultValue = false)]
-		public string groups;
+		public string tags;
 	}
 
 	[DataContract]
