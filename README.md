@@ -147,7 +147,7 @@ Additional labels for pre-release and build metadata are available as extensions
 Note: the client version does not necessarily reflect the version used in the AT&T M2X API.
 
 2.0.0 version of the library is server only.
-2.1.0 version is universal/portable.
+2.1.0+ version is universal/portable.
 
 License
 ==========================
