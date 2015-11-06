@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ATTM2X
 {
@@ -40,6 +41,10 @@ namespace ATTM2X
 		/// </summary>
 		public HttpResponseHeaders Headers { get; internal set; }
 		/// <summary>
+		/// The content headers included on the response.
+		/// </summary>
+		public HttpContentHeaders ContentHeaders { get; internal set; }
+		/// <summary>
 		/// The raw response body.
 		/// </summary>
 		public string Raw { get; internal set; }
@@ -49,8 +54,12 @@ namespace ATTM2X
 		/// </summary>
 		public T Json<T>() where T: class
 		{
-			if (String.IsNullOrWhiteSpace(this.Raw))
+			if (String.IsNullOrWhiteSpace(this.Raw) || this.ContentHeaders == null)
 				return null;
+			var contentType = this.ContentHeaders.ContentType;
+			if (contentType == null || contentType.MediaType != "application/json")
+				return null;
+
 			byte[] bytes = Encoding.UTF8.GetBytes(this.Raw);
 			var serializer = new DataContractJsonSerializer(typeof(T));
 			using (var stream = new MemoryStream(bytes))
@@ -101,12 +110,15 @@ namespace ATTM2X
 				new StringContent(this.RequestContent, Encoding.UTF8, "application/json");
 		}
 
-		internal async void SetResponse(HttpResponseMessage responseMessage)
+		internal async Task SetResponse(HttpResponseMessage responseMessage)
 		{
 			this.Status = responseMessage.StatusCode;
 			this.Headers = responseMessage.Headers;
 			if (responseMessage.Content != null)
+			{
+				this.ContentHeaders = responseMessage.Content.Headers;
 				this.Raw = await responseMessage.Content.ReadAsStringAsync();
+			}
 		}
 	}
 }

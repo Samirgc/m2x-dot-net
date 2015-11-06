@@ -13,6 +13,7 @@ namespace ATTM2X.Classes
 		public string name;
 		public string type;
 		public string value;
+		public string latest_value_at;
 		public StreamUnit unit;
 		public string url;
 		public string created;
@@ -32,6 +33,15 @@ namespace ATTM2X.Classes
 		public string type;
 		[DataMember]
 		public StreamUnit unit;
+	}
+
+	public class StreamValuesFilter
+	{
+		public string start;
+		public string end;
+		public double? min;
+		public double? max;
+		public int? limit;
 	}
 
 	[DataContract]
@@ -56,6 +66,25 @@ namespace ATTM2X.Classes
 		public string value;
 	}
 
+	public class StreamSamplingParams
+	{
+		public string type;
+		public int interval;
+		public string start;
+		public string end;
+		public string min;
+		public string max;
+		public int? limit;
+	}
+
+	public class StreamStatsParams
+	{
+		public string start;
+		public string end;
+		public string min;
+		public string max;
+	}
+
 	public class StreamStatsInfo
 	{
 		public string start;
@@ -70,5 +99,11 @@ namespace ATTM2X.Classes
 		public double max;
 		public double avg;
 		public double stddev;
+	}
+
+	public class DeleteValuesParams
+	{
+		public string from;
+		public string end;
 	}
 }

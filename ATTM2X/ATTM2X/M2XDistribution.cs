@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace ATTM2X
@@ -9,7 +8,7 @@ namespace ATTM2X
 	/// Wrapper for AT&T M2X Distribution API
 	/// https://m2x.att.com/developer/documentation/v2/distribution
 	/// </summary>
-	public sealed class M2XDistribution : M2XClass
+	public sealed class M2XDistribution : M2XClassWithMetadata
 	{
 		public const string UrlPath = "/distributions";
 
@@ -38,15 +37,6 @@ namespace ATTM2X
 		{
 			return MakeRequest(M2XDevice.UrlPath, M2XClientMethod.GET, parms);
 		}
-		/// <summary>
-		/// Retrieve list of devices added to the specified distribution.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/distribution#List-Devices-from-an-existing-Distribution
-		/// </summary>
-		public Task<M2XResponse> Devices(CancellationToken cancellationToken, object parms = null)
-		{
-			return MakeRequest(cancellationToken, M2XDevice.UrlPath, M2XClientMethod.GET, parms);
-		}
 
 		/// <summary>
 		/// Add a new device to an existing distribution
@@ -56,15 +46,6 @@ namespace ATTM2X
 		public Task<M2XResponse> AddDevice(object parms)
 		{
 			return MakeRequest(M2XDevice.UrlPath, M2XClientMethod.POST, parms);
-		}
-		/// <summary>
-		/// Add a new device to an existing distribution
-		///
-		/// https://m2x.att.com/developer/documentation/v2/distribution#Add-Device-to-an-existing-Distribution
-		/// </summary>
-		public Task<M2XResponse> AddDevice(CancellationToken cancellationToken, object parms)
-		{
-			return MakeRequest(cancellationToken, M2XDevice.UrlPath, M2XClientMethod.POST, parms);
 		}
 
 		/// <summary>
@@ -76,15 +57,6 @@ namespace ATTM2X
 		{
 			return MakeRequest(M2XStream.UrlPath, M2XClientMethod.GET, parms);
 		}
-		/// <summary>
-		/// Retrieve list of data streams associated with the specified distribution.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/distribution#List-Data-Streams
-		/// </summary>
-		public Task<M2XResponse> Streams(CancellationToken cancellationToken, object parms = null)
-		{
-			return MakeRequest(cancellationToken, M2XStream.UrlPath, M2XClientMethod.GET, parms);
-		}
 
 		/// <summary>
 		/// Get a wrapper to access a data stream associated with the specified distribution
@@ -92,52 +64,6 @@ namespace ATTM2X
 		public M2XStream Stream(string streamName)
 		{
 			return new M2XStream(this, streamName);
-		}
-
-		/// <summary>
-		/// Retrieve list of triggers associated with the specified distribution.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/distribution#List-Triggers
-		/// </summary>
-		public Task<M2XResponse> Triggers(object parms = null)
-		{
-			return MakeRequest(M2XTrigger.UrlPath, M2XClientMethod.GET, parms);
-		}
-		/// <summary>
-		/// Retrieve list of triggers associated with the specified distribution.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/distribution#List-Triggers
-		/// </summary>
-		public Task<M2XResponse> Triggers(CancellationToken cancellationToken, object parms = null)
-		{
-			return MakeRequest(cancellationToken, M2XTrigger.UrlPath, M2XClientMethod.GET, parms);
-		}
-
-		/// <summary>
-		/// Create a new trigger associated with the specified distribution.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/distribution#Create-Trigger
-		/// </summary>
-		public Task<M2XResponse> CreateTrigger(object parms)
-		{
-			return MakeRequest(M2XTrigger.UrlPath, M2XClientMethod.POST, parms);
-		}
-		/// <summary>
-		/// Create a new trigger associated with the specified distribution.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/distribution#Create-Trigger
-		/// </summary>
-		public Task<M2XResponse> CreateTrigger(CancellationToken cancellationToken, object parms)
-		{
-			return MakeRequest(cancellationToken, M2XTrigger.UrlPath, M2XClientMethod.POST, parms);
-		}
-
-		/// <summary>
-		/// Get a wrapper to access a trigger associated with the specified distribution.
-		/// </summary>
-		public M2XTrigger Trigger(string triggerId)
-		{
-			return new M2XTrigger(this, triggerId);
 		}
 	}
 }

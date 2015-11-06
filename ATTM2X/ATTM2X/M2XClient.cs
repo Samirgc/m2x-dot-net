@@ -28,6 +28,16 @@ namespace ATTM2X
 
 		private HttpClient client = new HttpClient();
 
+		private CancellationToken cancellationToken = CancellationToken.None;
+		/// <summary>
+		/// Gets or sets the cancellation token used in all requests
+		/// </summary>
+		public CancellationToken CancellationToken
+		{
+			get { return this.cancellationToken; }
+			set { this.cancellationToken = value; }
+		}
+
 		private volatile M2XResponse lastResponse;
 		/// <summary>
 		/// The last API call response
@@ -67,53 +77,45 @@ namespace ATTM2X
 		// Device API
 
 		/// <summary>
-		/// Search the catalog of public Devices.
+		/// List the catalog of public Devices.
 		///
-		/// This allows unauthenticated users to search Devices from other users
-		/// that have been marked as public, allowing them to read public Device
-		/// metadata, locations, streams list, and view each Devices' stream metadata
-		/// and its values.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/device#List-Search-Public-Devices-Catalog
+		/// https://m2x.att.com/developer/documentation/v2/device#List-Public-Devices-Catalog
 		/// </summary>
 		public Task<M2XResponse> DeviceCatalog(object parms = null)
 		{
 			return MakeRequest(M2XDevice.UrlPath + "/catalog", M2XClientMethod.GET, parms);
 		}
+
 		/// <summary>
 		/// Search the catalog of public Devices.
 		///
-		/// This allows unauthenticated users to search Devices from other users
-		/// that have been marked as public, allowing them to read public Device
-		/// metadata, locations, streams list, and view each Devices' stream metadata
-		/// and its values.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/device#List-Search-Public-Devices-Catalog
+		/// https://m2x.att.com/developer/documentation/v2/device#Search-Public-Devices-Catalog
 		/// </summary>
-		public Task<M2XResponse> DeviceCatalog(CancellationToken cancellationToken, object parms = null)
+		public Task<M2XResponse> DeviceCatalogSearch(object parms = null, object bodyParms = null)
 		{
-			return MakeRequest(cancellationToken, M2XDevice.UrlPath + "/catalog", M2XClientMethod.GET, parms);
+			// TODO: bodyParms?
+			return MakeRequest(M2XDevice.UrlPath + "/catalog/search", M2XClientMethod.GET, parms, bodyParms);
 		}
 
 		/// <summary>
-		/// Retrieve the list of devices accessible by the authenticated API key that
-		/// meet the search criteria.
+		/// Retrieve the list of devices accessible by the authenticated API key.
 		///
-		/// https://m2x.att.com/developer/documentation/v2/device#List-Search-Devices
+		/// https://m2x.att.com/developer/documentation/v2/device#List-Devices
 		/// </summary>
 		public Task<M2XResponse> Devices(object parms = null)
 		{
 			return MakeRequest(M2XDevice.UrlPath, M2XClientMethod.GET, parms);
 		}
+
 		/// <summary>
-		/// Retrieve the list of devices accessible by the authenticated API key that
-		/// meet the search criteria.
+		/// Retrieve the list of devices accessible by the authenticated API key that meet the search criteria.
 		///
-		/// https://m2x.att.com/developer/documentation/v2/device#List-Search-Devices
+		/// https://m2x.att.com/developer/documentation/v2/device#Search-Devices
 		/// </summary>
-		public Task<M2XResponse> Devices(CancellationToken cancellationToken, object parms = null)
+		public Task<M2XResponse> SearchDevices(object parms = null, object bodyParms = null)
 		{
-			return MakeRequest(cancellationToken, M2XDevice.UrlPath, M2XClientMethod.GET, parms);
+			// TODO: bodyParms?
+			return MakeRequest(M2XDevice.UrlPath + "/search", M2XClientMethod.GET, parms, bodyParms);
 		}
 
 		/// <summary>
@@ -126,16 +128,6 @@ namespace ATTM2X
 		{
 			return MakeRequest(M2XDevice.UrlPath + "/tags", M2XClientMethod.GET, parms);
 		}
-		/// <summary>
-		/// List Device Tags
-		/// Retrieve the list of device tags for the authenticated user.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/device#List-Device-Tags
-		/// </summary>
-		public Task<M2XResponse> DeviceTags(CancellationToken cancellationToken, object parms = null)
-		{
-			return MakeRequest(cancellationToken, M2XDevice.UrlPath + "/tags", M2XClientMethod.GET, parms);
-		}
 
 		/// <summary>
 		/// Create a new device
@@ -146,22 +138,13 @@ namespace ATTM2X
 		{
 			return MakeRequest(M2XDevice.UrlPath, M2XClientMethod.POST, parms);
 		}
-		/// <summary>
-		/// Create a new device
-		///
-		/// https://m2x.att.com/developer/documentation/v2/device#Create-Device
-		/// </summary>
-		public Task<M2XResponse> CreateDevice(CancellationToken cancellationToken, object parms)
-		{
-			return MakeRequest(cancellationToken, M2XDevice.UrlPath, M2XClientMethod.POST, parms);
-		}
 
 		/// <summary>
 		/// Get a wrapper to access an existing Device.
 		/// </summary>
-		public M2XDevice Device(string deviceId)
+		public M2XDevice Device(string deviceId, string serial = null)
 		{
-			return new M2XDevice(this, deviceId);
+			return new M2XDevice(this, deviceId, serial);
 		}
 
 		// Distribution API
@@ -175,15 +158,6 @@ namespace ATTM2X
 		{
 			return MakeRequest(M2XDistribution.UrlPath, M2XClientMethod.GET, parms);
 		}
-		/// <summary>
-		/// Retrieve list of device distributions accessible by the authenticated API key.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/distribution#List-Distributions
-		/// </summary>
-		public Task<M2XResponse> Distributions(CancellationToken cancellationToken, object parms = null)
-		{
-			return MakeRequest(cancellationToken, M2XDistribution.UrlPath, M2XClientMethod.GET, parms);
-		}
 
 		/// <summary>
 		/// Create a new device distribution
@@ -193,15 +167,6 @@ namespace ATTM2X
 		public Task<M2XResponse> CreateDistribution(object parms)
 		{
 			return MakeRequest(M2XDistribution.UrlPath, M2XClientMethod.POST, parms);
-		}
-		/// <summary>
-		/// Create a new device distribution
-		///
-		/// https://m2x.att.com/developer/documentation/v2/distribution#Create-Distribution
-		/// </summary>
-		public Task<M2XResponse> CreateDistribution(CancellationToken cancellationToken, object parms)
-		{
-			return MakeRequest(cancellationToken, M2XDistribution.UrlPath, M2XClientMethod.POST, parms);
 		}
 
 		/// <summary>
@@ -223,15 +188,6 @@ namespace ATTM2X
 		{
 			return MakeRequest(M2XKey.UrlPath, M2XClientMethod.GET, parms);
 		}
-		/// <summary>
-		/// Retrieve list of keys associated with the specified account.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/keys#List-Keys
-		/// </summary>
-		public Task<M2XResponse> Keys(CancellationToken cancellationToken, object parms = null)
-		{
-			return MakeRequest(cancellationToken, M2XKey.UrlPath, M2XClientMethod.GET, parms);
-		}
 
 		/// <summary>
 		/// Create a new key associated with the specified account.
@@ -242,15 +198,6 @@ namespace ATTM2X
 		{
 			return MakeRequest(M2XKey.UrlPath, M2XClientMethod.POST, parms);
 		}
-		/// <summary>
-		/// Create a new key associated with the specified account.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/keys#Create-Key
-		/// </summary>
-		public Task<M2XResponse> CreateKey(CancellationToken cancellationToken, object parms)
-		{
-			return MakeRequest(cancellationToken, M2XKey.UrlPath, M2XClientMethod.POST, parms);
-		}
 
 		/// <summary>
 		/// Get a wrapper to access an existing key associated with the specified account.
@@ -260,58 +207,78 @@ namespace ATTM2X
 			return new M2XKey(this, key);
 		}
 
-		// Charts API
+		// Collections API
 
 		/// <summary>
-		/// Retrieve the list of charts that belong to the authenticated user.
+		/// Retrieve a list of collections accessible by the authenticated user.
 		///
-		/// https://m2x.att.com/developer/documentation/v2/charts#List-Charts
+		/// https://m2x.att.com/developer/documentation/v2/collections#List-collections
 		/// </summary>
-		public Task<M2XResponse> Charts(object parms = null)
+		public Task<M2XResponse> Collections(object parms = null)
 		{
-			return MakeRequest(M2XChart.UrlPath, M2XClientMethod.GET, parms);
-		}
-		/// <summary>
-		/// Retrieve the list of charts that belong to the authenticated user.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/charts#List-Charts
-		/// </summary>
-		public Task<M2XResponse> Charts(CancellationToken cancellationToken, object parms = null)
-		{
-			return MakeRequest(cancellationToken, M2XChart.UrlPath, M2XClientMethod.GET, parms);
+			return MakeRequest(M2XCollection.UrlPath, M2XClientMethod.GET, parms);
 		}
 
 		/// <summary>
-		/// Create a new chart associated with the authenticated account.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/charts#Create-Chart
+		/// Create a new collection.
+		/// 
+		/// https://m2x.att.com/developer/documentation/v2/collections#Create-Collection
 		/// </summary>
-		public Task<M2XResponse> CreateChart(object parms)
+		public Task<M2XResponse> CreateCollection(object parms)
 		{
-			return MakeRequest(M2XChart.UrlPath, M2XClientMethod.POST, parms);
-		}
-		/// <summary>
-		/// Create a new chart associated with the authenticated account.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/charts#Create-Chart
-		/// </summary>
-		public Task<M2XResponse> CreateChart(CancellationToken cancellationToken, object parms)
-		{
-			return MakeRequest(cancellationToken, M2XChart.UrlPath, M2XClientMethod.POST, parms);
+			return MakeRequest(M2XCollection.UrlPath, M2XClientMethod.POST, parms);
 		}
 
 		/// <summary>
-		/// Get a wrapper to access an existing chart.
+		/// Get a wrapper to access an existing Collection.
 		/// </summary>
-		public M2XChart Chart(string chartId)
+		public M2XCollection Collection(string collectionId)
 		{
-			return new M2XChart(this, chartId);
+			return new M2XCollection(this, collectionId);
+		}
+
+		// Jobs API
+
+		/// <summary>
+		/// Retrieve the list of the most recent jobs that belong to the authenticated user.
+		///
+		/// https://m2x.att.com/developer/documentation/v2/jobs#List-Jobs
+		/// </summary>
+		public Task<M2XResponse> Jobs(object parms = null)
+		{
+			return MakeRequest("/jobs", M2XClientMethod.GET, parms);
+		}
+
+		/// <summary>
+		/// Retrieve the job details.
+		///
+		/// https://m2x.att.com/developer/documentation/v2/jobs#View-Job-Details
+		/// https://m2x.att.com/developer/documentation/v2/jobs#View-Job-Results
+		/// </summary>
+		public Task<M2XResponse> JobDetails(string jobId)
+		{
+			return MakeRequest("/jobs/" + WebUtility.UrlEncode(jobId), M2XClientMethod.GET);
+		}
+
+		// Time API
+
+		/// <summary>
+		/// Returns M2X servers' time.
+		///
+		/// https://m2x.att.com/developer/documentation/v2/time
+		/// </summary>
+		public Task<M2XResponse> Time(string format = null)
+		{
+			string path = "/time";
+			if (!String.IsNullOrEmpty(format))
+				path += "/" + WebUtility.UrlEncode(format);
+			return MakeRequest(path);
 		}
 
 		// Common
 
 		/// <summary>
-		/// Formats a DateTime value to an ISO8601 timestamp
+		/// Formats a DateTime value to an ISO8601 timestamp.
 		/// </summary>
 		public static string DateTimeToString(DateTime dateTime)
 		{
@@ -335,60 +302,53 @@ namespace ATTM2X
 			return fullUrl;
 		}
 
+		/// <summary>
+		/// Performs async M2X API request
+		/// </summary>
+		/// <param name="path">API path</param>
+		/// <param name="method">HTTP method</param>
+		/// <param name="parms">Query string (for GET and DELETE) or body (for POST and PUT) parameters</param>
+		/// <param name="addBodyParms">Additional body parameters, if specified, the parms will be treated as query parameters.
+		/// The passed object will be serialized into a JSON string. In case of a string passed it will be treated as a valid JSON string.</param>
+		/// <returns>The request and response data from M2X server</returns>
 		public async Task<M2XResponse> MakeRequest(
-			string path, M2XClientMethod method = M2XClientMethod.GET, object parms = null)
+			string path, M2XClientMethod method = M2XClientMethod.GET, object parms = null, object addBodyParms = null)
 		{
-			M2XResponse result = CreateResponse(path, method, parms);
+			M2XResponse result = CreateResponse(path, method, parms, addBodyParms);
+			CancellationToken ct = this.cancellationToken;
 			try
 			{
 				HttpResponseMessage responseMessage;
 				switch (method)
 				{
 					case M2XClientMethod.POST:
-						responseMessage = await this.client.PostAsync(result.RequestUri, result.GetContent());
+						responseMessage = ct == CancellationToken.None
+							? await this.client.PostAsync(result.RequestUri, result.GetContent())
+							: await this.client.PostAsync(result.RequestUri, result.GetContent(), ct);
 						break;
 					case M2XClientMethod.PUT:
-						responseMessage = await this.client.PutAsync(result.RequestUri, result.GetContent());
+						responseMessage = ct == CancellationToken.None
+							? await this.client.PutAsync(result.RequestUri, result.GetContent())
+							: await this.client.PutAsync(result.RequestUri, result.GetContent(), ct);
 						break;
 					case M2XClientMethod.DELETE:
-						responseMessage = await this.client.DeleteAsync(result.RequestUri);
+						responseMessage = ct == CancellationToken.None
+							? await this.client.DeleteAsync(result.RequestUri)
+							: await this.client.DeleteAsync(result.RequestUri, ct);
 						break;
 					default:
-						responseMessage = await this.client.GetAsync(result.RequestUri);
+						responseMessage = ct == CancellationToken.None
+							? await this.client.GetAsync(result.RequestUri)
+							: await this.client.GetAsync(result.RequestUri, ct);
 						break;
 				}
-				result.SetResponse(responseMessage);
+				if (ct != CancellationToken.None)
+					ct.ThrowIfCancellationRequested();
+				await result.SetResponse(responseMessage);
 			}
-			catch (Exception ex)
+			catch (OperationCanceledException)
 			{
-				result.WebError = ex;
-			}
-			this.lastResponse = result;
-			return result;
-		}
-		public async Task<M2XResponse> MakeRequest(CancellationToken cancellationToken,
-			string path, M2XClientMethod method = M2XClientMethod.GET, object parms = null)
-		{
-			M2XResponse result = CreateResponse(path, method, parms);
-			try
-			{
-				HttpResponseMessage responseMessage;
-				switch (method)
-				{
-					case M2XClientMethod.POST:
-						responseMessage = await this.client.PostAsync(result.RequestUri, result.GetContent(), cancellationToken);
-						break;
-					case M2XClientMethod.PUT:
-						responseMessage = await this.client.PutAsync(result.RequestUri, result.GetContent(), cancellationToken);
-						break;
-					case M2XClientMethod.DELETE:
-						responseMessage = await this.client.DeleteAsync(result.RequestUri, cancellationToken);
-						break;
-					default:
-						responseMessage = await this.client.GetAsync(result.RequestUri, cancellationToken);
-						break;
-				}
-				result.SetResponse(responseMessage);
+				throw;
 			}
 			catch (Exception ex)
 			{
@@ -398,11 +358,11 @@ namespace ATTM2X
 			return result;
 		}
 
-		private M2XResponse CreateResponse(string path, M2XClientMethod method, object parms)
+		private M2XResponse CreateResponse(string path, M2XClientMethod method, object parms, object addBodyParms)
 		{
 			bool isGetOrDelete = method == M2XClientMethod.GET || method == M2XClientMethod.DELETE;
-			string url = BuildUrl(path, isGetOrDelete ? parms : null);
-			string content = isGetOrDelete ? null : SerializeData(parms);
+			string url = BuildUrl(path, isGetOrDelete || addBodyParms != null ? parms : null);
+			string content = isGetOrDelete ? SerializeData(addBodyParms) : SerializeData(addBodyParms ?? parms);
 			return new M2XResponse(new Uri(url), method, content);
 		}
 

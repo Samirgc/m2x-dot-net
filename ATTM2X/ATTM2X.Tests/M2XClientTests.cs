@@ -1,7 +1,9 @@
 ﻿using ATTM2X;
 using ATTM2X.Classes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Net;
+using System.Runtime.Serialization;
 using System.Threading;
 
 namespace ATTM2X.Tests
@@ -21,6 +23,11 @@ namespace ATTM2X.Tests
 		[TestMethod]
 		public void DeviceAPITest()
 		{
+			// TODO:
+			// DeviceCatalogSearch
+			// SearchDevices
+			// Device.SearchValues
+
 			// device
 
 			response = m2x.DeviceTags().Result;
@@ -30,7 +37,7 @@ namespace ATTM2X.Tests
 			Assert.IsFalse(response.Error);
 			Assert.IsNotNull(response.Raw);
 
-			response = m2x.DeviceCatalog(new { page = 1, limit = 10 }).Result;
+			response = m2x.DeviceCatalog(new DeviceListParams { page = 1, limit = 10, sort = M2XDeviceSortOrder.Name, dir = M2XSortDirection.Asc }).Result;
 			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
 			var deviceList = response.Json<DeviceList>();
 			Assert.IsNotNull(deviceList.devices);
@@ -80,7 +87,7 @@ namespace ATTM2X.Tests
 				}).Result;
 			Assert.AreEqual(HttpStatusCode.Accepted, response.Status, response.Raw);
 
-			Thread.Sleep(1000);
+			Thread.Sleep(2000);
 
 			response = device.Location().Result;
 			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
@@ -120,9 +127,9 @@ namespace ATTM2X.Tests
 			response = stream.Details().Result;
 			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
 			var streamDetails = response.Json<StreamDetails>();
-			Assert.AreEqual("10.0", streamDetails.value);
+			Assert.AreEqual("10", streamDetails.value);
 
-			response = stream.Values(new { start = M2XClient.DateTimeToString(this.UtcNow.AddHours(-1)) }).Result;
+			response = stream.Values(new StreamValuesFilter { start = M2XClient.DateTimeToString(this.UtcNow.AddHours(-1)) }, M2XStreamValuesFormat.Json).Result;
 			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
 			var streamValues = response.Json<StreamValues>();
 			Assert.IsNotNull(streamValues.values);
@@ -131,9 +138,9 @@ namespace ATTM2X.Tests
 			response = stream.UpdateValue(new StreamValue { value = "20" }).Result;
 			Assert.AreEqual(HttpStatusCode.Accepted, response.Status, response.Raw);
 
-			Thread.Sleep(1000);
+			Thread.Sleep(1500);
 
-			response = stream.Sampling(new { type = M2XSamplingType.Sum, interval = 100 }).Result;
+			response = stream.Sampling(new StreamSamplingParams { type = M2XSamplingType.Sum, interval = 100 }).Result;
 			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
 			streamValues = response.Json<StreamValues>();
 			Assert.IsNotNull(streamValues.values);
@@ -159,57 +166,39 @@ namespace ATTM2X.Tests
 			}).Result;
 			Assert.AreEqual(HttpStatusCode.Accepted, response.Status, response.Raw);
 
-			response = stream.DeleteValues(new { from, end }).Result;
+			response = stream.DeleteValues(new DeleteValuesParams { from = from, end = end }).Result;
 			Assert.AreEqual(HttpStatusCode.NoContent, response.Status, response.Raw);
 
-			// trigger
+			// values
 
-			var triggerParams = new TriggerParams
+			response = device.PostUpdate(new TestDeviceValue
 			{
-				stream = stream.StreamName,
-				name = "test trigger",
-				condition = M2XTriggerCondition.Equal,
-				value = "0",
-				callback_url = M2XClient.ApiEndPoint,
-			};
-			response = device.CreateTrigger(triggerParams).Result;
-			Assert.AreEqual(HttpStatusCode.Created, response.Status, response.Raw);
-			var triggerDetails = response.Json<TriggerDetails>();
-			string triggerId = triggerDetails.id;
-			Assert.IsNotNull(triggerId);
-			this.trigger = device.Trigger(triggerId);
+				timestamp = M2XClient.DateTimeToString(this.UtcNow.AddMinutes(-3)),
+				values = new TestDeviceStreamValue { testdevicestream = 3 },
+			}).Result;
+			Assert.AreEqual(HttpStatusCode.Accepted, response.Status, response.Raw);
+
+			response = device.PostUpdates(new TestDeviceValues
+			{
+				values = new TestDeviceStreamValues
+				{
+					testdevicestream = new StreamValue[]
+					{
+						new StreamValue { timestamp = from, value = "1", },
+						new StreamValue { timestamp = end, value = "2", },
+					},
+				},
+			}).Result;
+			Assert.AreEqual(HttpStatusCode.Accepted, response.Status, response.Raw);
 
 			Thread.Sleep(1000);
 
-			response = trigger.Details().Result;
+			response = device.Values(new DeviceValuesFilter { streams = "testdevicestream" }).Result;
 			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
-			triggerDetails = response.Json<TriggerDetails>();
-			Assert.AreEqual(M2XStatus.Enabled, triggerDetails.status);
-			Assert.AreEqual(triggerParams.name, triggerDetails.name);
-
-			response = device.Triggers().Result;
-			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
-			var triggerList = response.Json<TriggerList>();
-			Assert.IsNotNull(triggerList.triggers);
-			Assert.AreEqual(1, triggerList.triggers.Length);
-			Assert.AreEqual(stream.StreamName, triggerList.triggers[0].stream);
-
-			triggerParams.name += this.TestId;
-			response = trigger.Update(triggerParams).Result;
-			Assert.AreEqual(HttpStatusCode.NoContent, response.Status, response.Raw);
-
-			trigger.Test(new TriggerTestParams
-			{
-				device_id = device.DeviceId,
-				stream = stream.StreamName,
-				trigger_name = "test",
-				trigger_description = "test",
-				condition = M2XTriggerCondition.Equal,
-				threshold = 3.5,
-				value = "0",
-				timestamp = M2XClient.DateTimeToString(this.UtcNow),
-			});
-			Assert.AreEqual(HttpStatusCode.NoContent, response.Status, response.Raw);
+			var values = response.Json<TestDeviceValueList>();
+			Assert.IsNotNull(values);
+			Assert.IsNotNull(values.values);
+			Assert.AreEqual(5, values.values.Length);
 		}
 
 		[Ignore]
@@ -289,38 +278,6 @@ namespace ATTM2X.Tests
 			var streamList = response.Json<StreamList>();
 			Assert.IsNotNull(streamList.streams);
 			Assert.AreEqual(1, streamList.streams.Length);
-
-			// trigger
-
-			var triggerParams = new TriggerParams
-			{
-				stream = stream.StreamName,
-				name = "test trigger",
-				condition = M2XTriggerCondition.Equal,
-				value = "0",
-				callback_url = M2XClient.ApiEndPoint,
-			};
-			response = distribution.CreateTrigger(triggerParams).Result;
-			Assert.AreEqual(HttpStatusCode.Created, response.Status, response.Raw);
-			var triggerDetails = response.Json<TriggerDetails>();
-			string triggerId = triggerDetails.id;
-			Assert.IsNotNull(triggerId);
-			this.trigger = distribution.Trigger(triggerId);
-
-			Thread.Sleep(1000);
-
-			response = trigger.Details().Result;
-			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
-			triggerDetails = response.Json<TriggerDetails>();
-			Assert.AreEqual(M2XStatus.Enabled, triggerDetails.status);
-			Assert.AreEqual(triggerParams.name, triggerDetails.name);
-
-			response = distribution.Triggers().Result;
-			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
-			var triggerList = response.Json<TriggerList>();
-			Assert.IsNotNull(triggerList.triggers);
-			Assert.AreEqual(1, triggerList.triggers.Length);
-			Assert.AreEqual(stream.StreamName, triggerList.triggers[0].stream);
 		}
 
 		[TestMethod]
@@ -373,85 +330,160 @@ namespace ATTM2X.Tests
 		}
 
 		[TestMethod]
-		public void ChartApiTest()
+		public void CollectionsApiTest()
 		{
-			// device & stream
-
-			response = m2x.CreateDevice(new DeviceParams
+			var parms = new CollectionParams
 			{
-				name = "TestDevice-" + this.TestId,
-				visibility = M2XVisibility.Private,
-			}).Result;
-			Assert.AreEqual(HttpStatusCode.Created, response.Status, response.Raw);
-			var deviceDetails = response.Json<DeviceDetails>();
-			Assert.IsNotNull(deviceDetails.id);
-			this.device = m2x.Device(deviceDetails.id);
-
-			Thread.Sleep(1000);
-
-			this.stream = device.Stream("testdevicestream");
-			response = stream.Update(new StreamParams
-			{
-				type = M2XStreamType.Numeric,
-				unit = new StreamUnit { label = "points", symbol = "pt" },
-			}).Result;
-			Assert.AreEqual(HttpStatusCode.Created, response.Status, response.Raw);
-
-			Thread.Sleep(1000);
-
-			response = stream.PostValues(new StreamValues
-			{
-				values = new StreamValue[]
-				{
-					new StreamValue { timestamp = M2XClient.DateTimeToString(this.UtcNow.AddMinutes(-3)), value = "30" },
-					new StreamValue { timestamp = M2XClient.DateTimeToString(this.UtcNow.AddMinutes(-2)), value = "10" },
-					new StreamValue { timestamp = M2XClient.DateTimeToString(this.UtcNow.AddMinutes(-1)), value = "20" },
-					new StreamValue { timestamp = M2XClient.DateTimeToString(this.UtcNow), value = "30" },
-				}
-			}).Result;
-			Assert.AreEqual(HttpStatusCode.Accepted, response.Status, response.Raw);
-
-			// charts
-
-			var chartParams = new ChartParams
-			{
-				name = "testchart" + this.TestId,
-				series = new ChartSeries[]
-				{
-					new ChartSeries { device = device.DeviceId, stream = stream.StreamName }
-				}
+				name = "TestCollection-" + this.TestId,
+				description = "UnitTest",
 			};
-			response = m2x.CreateChart(chartParams).Result;
+			response = m2x.CreateCollection(parms).Result;
 			Assert.AreEqual(HttpStatusCode.Created, response.Status, response.Raw);
-			var chartDetails = response.Json<ChartDetails>();
-			Assert.IsNotNull(chartDetails.id);
-			this.chart = m2x.Chart(chartDetails.id);
-			Assert.AreEqual(chartParams.name, chartDetails.name);
-			Assert.IsNotNull(chartDetails.series);
-			Assert.AreEqual(1, chartDetails.series.Length);
-			Assert.AreEqual(device.DeviceId, chartDetails.series[0].device);
-			Assert.AreEqual(stream.StreamName, chartDetails.series[0].stream);
+			var collectionDetails = response.Json<CollectionDetails>();
+			Assert.IsNotNull(collectionDetails.id);
+			this.collection = m2x.Collection(collectionDetails.id);
+			Assert.AreEqual(parms.name, collectionDetails.name);
 
 			Thread.Sleep(1000);
 
-			response = chart.Details().Result;
+			response = this.collection.Details().Result;
 			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
-			chartDetails = response.Json<ChartDetails>();
-			Assert.AreEqual(chartParams.name, chartDetails.name);
-			Assert.IsNotNull(chartDetails.series);
+			collectionDetails = response.Json<CollectionDetails>();
+			Assert.AreEqual(parms.name, collectionDetails.name);
+			Assert.AreEqual(parms.description, collectionDetails.description);
 
-			chartParams.name += "_";
-			response = chart.Update(chartParams).Result;
+			response = m2x.Collections().Result;
+			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+			var collectionList = response.Json<CollectionList>();
+			Assert.IsNotNull(collectionList.collections);
+			Assert.IsTrue(collectionList.collections.Length > 0);
+			Assert.AreEqual(parms.name, collectionList.collections[collectionList.collections.Length - 1].name);
+
+			parms.name += "_";
+			response = collection.Update(parms).Result;
+			Assert.AreEqual(HttpStatusCode.NoContent, response.Status, response.Raw);
+			response = collection.Details().Result;
+			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+			collectionDetails = response.Json<CollectionDetails>();
+			Assert.AreEqual(parms.name, collectionDetails.name);
+
+			// metadata
+
+			response = collection.UpdateMetadata(new TestMetadata { field1 = "value1", field2 = "value2" }).Result;
 			Assert.AreEqual(HttpStatusCode.NoContent, response.Status, response.Raw);
 
-			response = m2x.Charts().Result;
+			response = collection.Metadata().Result;
 			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
-			var chartList = response.Json<ChartList>();
-			Assert.IsNotNull(chartList.charts);
-			Assert.AreEqual(1, chartList.charts.Length);
+			var metadata = response.Json<TestMetadata>();
+			Assert.IsNotNull(metadata);
+			Assert.AreEqual("value1", metadata.field1);
 
-			string url = chart.RenderUrl(M2XRenderFormat.Png, new { width = 100, height = 50 });
-			Assert.IsNotNull(url);
+			response = collection.UpdateMetadataField("field1", new MetadataFieldParams { value = "value3" }).Result;
+			Assert.AreEqual(HttpStatusCode.NoContent, response.Status, response.Raw);
+
+			response = collection.MetadataField("field2").Result;
+			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+			var value = response.Json<MetadataFieldParams>();
+			Assert.IsNotNull(value);
+			Assert.AreEqual("value2", value.value);
+
+			response = collection.MetadataField("field1").Result;
+			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+			value = response.Json<MetadataFieldParams>();
+			Assert.IsNotNull(value);
+			Assert.AreEqual("value3", value.value);
+		}
+
+		[TestMethod]
+		public void JobsApiTest()
+		{
+			response = m2x.Jobs(new JobListParams { page = 1, limit = 10 }).Result;
+			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+			var list = response.Json<JobList>();
+			Assert.IsNotNull(list);
+
+			if (list.jobs != null && list.jobs.Length > 0)
+			{
+				string jobId = list.jobs[0].id;
+				response = m2x.JobDetails(jobId).Result;
+				Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+				var job = response.Json<JobDetails>();
+				Assert.IsNotNull(job);
+				Assert.AreEqual(jobId, job.id);
+			}
+		}
+
+		[TestMethod]
+		public void TimeApiTest()
+		{
+			response = m2x.Time().Result;
+			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+			var time = response.Json<TimeInfo>();
+			Assert.IsNotNull(time);
+
+			response = m2x.Time(M2XTimeFormat.Seconds).Result;
+			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+			Assert.IsNotNull(response.Raw);
+
+			response = m2x.Time(M2XTimeFormat.Millis).Result;
+			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+			Assert.IsNotNull(response.Raw);
+
+			response = m2x.Time(M2XTimeFormat.Iso8601).Result;
+			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+			Assert.IsNotNull(response.Raw);
+		}
+
+		[DataContract]
+		private class TestMetadata
+		{
+			[DataMember]
+			public string field1;
+			[DataMember]
+			public string field2;
+		}
+
+		[DataContract]
+		private class TestDeviceValueList
+		{
+			[DataMember]
+			public string start;
+			[DataMember]
+			public string end;
+			[DataMember]
+			public int limit;
+			[DataMember]
+			public TestDeviceValue[] values;
+		}
+
+		[DataContract]
+		private class TestDeviceValue
+		{
+			[DataMember]
+			public string timestamp;
+			[DataMember]
+			public TestDeviceStreamValue values;
+		}
+
+		[DataContract]
+		private class TestDeviceStreamValue
+		{
+			[DataMember]
+			public int testdevicestream;
+		}
+
+		[DataContract]
+		private class TestDeviceValues
+		{
+			[DataMember]
+			public TestDeviceStreamValues values;
+		}
+
+		[DataContract]
+		private class TestDeviceStreamValues
+		{
+			[DataMember]
+			public StreamValue[] testdevicestream;
 		}
 	}
 }

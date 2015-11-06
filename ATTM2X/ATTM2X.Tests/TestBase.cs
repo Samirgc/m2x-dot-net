@@ -18,9 +18,8 @@ namespace ATTM2X.Tests
 		protected M2XDistribution distribution = null;
 		protected M2XDevice device = null;
 		protected M2XStream stream = null;
-		protected M2XTrigger trigger = null;
 		protected M2XKey key = null;
-		protected M2XChart chart = null;
+		protected M2XCollection collection = null;
 
 		[TestInitialize]
 		public void Init()
@@ -34,20 +33,10 @@ namespace ATTM2X.Tests
 		[TestCleanup]
 		public void Cleanup()
 		{
-			if (this.chart != null)
-			{
-				Delete(this.chart);
-				this.chart = null;
-			}
 			if (this.key != null)
 			{
 				Delete(this.key);
 				this.key = null;
-			}
-			if (this.chart != null)
-			{
-				Delete(this.trigger);
-				this.trigger = null;
 			}
 			if (this.stream != null)
 			{
@@ -63,6 +52,11 @@ namespace ATTM2X.Tests
 			{
 				Delete(this.distribution);
 				this.distribution = null;
+			}
+			if (this.collection != null)
+			{
+				Delete(this.collection);
+				this.collection = null;
 			}
 			if (this.m2x != null)
 			{

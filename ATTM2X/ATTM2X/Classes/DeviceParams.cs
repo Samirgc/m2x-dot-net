@@ -3,7 +3,31 @@ using System.Runtime.Serialization;
 
 namespace ATTM2X.Classes
 {
-	public class DeviceList
+	public class DeviceListParams : ListParams
+	{
+		public string dir;
+		public string sort;
+	}
+
+	public class DeviceCatalogSearchParams : DeviceListParams
+	{
+		public string name;
+		public string description;
+		public string tags;
+		public string serial;
+	}
+
+	public class DeviceSearchParams : DeviceCatalogSearchParams
+	{
+		public string ids;
+		public string status;
+		public string visibility;
+		public string modified_since;
+		public string unmodified_since;
+		public string collection;
+	}
+
+	public class DeviceList : ListResult
 	{
 		public DeviceDetails[] devices;
 	}
@@ -17,6 +41,7 @@ namespace ATTM2X.Classes
 		public string status;
 		public string serial;
 		public string[] tags;
+		public string key;
 		public string url;
 		public LocationDetails location;
 		public string created;
@@ -48,6 +73,12 @@ namespace ATTM2X.Classes
 		public string visibility;
 		[DataMember(EmitDefaultValue = false)]
 		public string tags;
+		[DataMember(EmitDefaultValue = false)]
+		public string base_device;
+		[DataMember(EmitDefaultValue = false)]
+		public string collection;
+		[DataMember(EmitDefaultValue = false)]
+		public string serial;
 	}
 
 	[DataContract]
@@ -76,5 +107,62 @@ namespace ATTM2X.Classes
 		public int status;
 		public string method;
 		public string path;
+	}
+
+	[DataContract]
+	public class LocationFilter
+	{
+		[DataMember(EmitDefaultValue = false)]
+		public WithinCircleFilter within_circle;
+		[DataMember(EmitDefaultValue = false)]
+		public LocationPointParams[] within_polygon;
+	}
+
+	[DataContract]
+	public class WithinCircleFilter
+	{
+		[DataMember]
+		public LocationPointParams center;
+		[DataMember]
+		public RadiusParams radius;
+	}
+
+	[DataContract]
+	public class LocationPointParams
+	{
+		[DataMember]
+		public double latitude;
+		[DataMember]
+		public double longitude;
+	}
+
+	[DataContract]
+	public class RadiusParams
+	{
+		[DataMember(EmitDefaultValue = false)]
+		public int? mi;
+		[DataMember(EmitDefaultValue = false)]
+		public int? miles;
+		[DataMember(EmitDefaultValue = false)]
+		public int? km;
+	}
+
+	public class DeviceValuesFilter
+	{
+		public string start;
+		public string end;
+		public int? limit;
+		public string streams;
+	}
+
+	[DataContract]
+	public class DeviceValuesSearchParams
+	{
+		[DataMember]
+		public string start;
+		[DataMember]
+		public string end;
+		[DataMember]
+		public string streams;
 	}
 }

@@ -1,6 +1,5 @@
 using System;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace ATTM2X
@@ -37,15 +36,6 @@ namespace ATTM2X
 		public Task<M2XResponse> Regenerate()
 		{
 			return MakeRequest("/regenerate", M2XClientMethod.POST);
-		}
-		/// <summary>
-		/// Regenerate the specified key.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/keys#Regenerate-Key
-		/// </summary>
-		public Task<M2XResponse> Regenerate(CancellationToken cancellationToken)
-		{
-			return MakeRequest(cancellationToken, "/regenerate", M2XClientMethod.POST);
 		}
 	}
 }

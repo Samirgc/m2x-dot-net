@@ -38,24 +38,26 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\ChartParams.cs" />
+    <Compile Include="Classes\CollectionParams.cs" />
     <Compile Include="Classes\DeviceParams.cs" />
     <Compile Include="Classes\DistributionParams.cs" />
     <Compile Include="Classes\ErrorInfo.cs" />
+    <Compile Include="Classes\JobParams.cs" />
     <Compile Include="Classes\KeyParams.cs" />
+    <Compile Include="Classes\ListParams.cs" />
+    <Compile Include="Classes\MetadataParams.cs" />
     <Compile Include="Classes\StreamParams.cs" />
-    <Compile Include="Classes\TriggerParams.cs" />
+    <Compile Include="Classes\TimeParams.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="M2XChart.cs" />
     <Compile Include="M2XClass.cs" />
     <Compile Include="M2XClient.cs" />
+    <Compile Include="M2XCollection.cs" />
     <Compile Include="M2XDevice.cs" />
     <Compile Include="M2XDistribution.cs" />
     <Compile Include="M2XKey.cs" />
     <Compile Include="M2XResponse.cs" />
     <Compile Include="M2XStream.cs" />
-    <Compile Include="M2XTrigger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
