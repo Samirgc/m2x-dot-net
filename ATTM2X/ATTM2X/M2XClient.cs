@@ -93,8 +93,7 @@ namespace ATTM2X
 		/// </summary>
 		public Task<M2XResponse> DeviceCatalogSearch(object parms = null, object bodyParms = null)
 		{
-			// TODO: bodyParms?
-			return MakeRequest(M2XDevice.UrlPath + "/catalog/search", M2XClientMethod.GET, parms, bodyParms);
+			return MakeRequest(M2XDevice.UrlPath + "/catalog/search", bodyParms == null ? M2XClientMethod.GET : M2XClientMethod.POST, parms, bodyParms);
 		}
 
 		/// <summary>
@@ -114,8 +113,7 @@ namespace ATTM2X
 		/// </summary>
 		public Task<M2XResponse> SearchDevices(object parms = null, object bodyParms = null)
 		{
-			// TODO: bodyParms?
-			return MakeRequest(M2XDevice.UrlPath + "/search", M2XClientMethod.GET, parms, bodyParms);
+			return MakeRequest(M2XDevice.UrlPath + "/search", bodyParms == null ? M2XClientMethod.GET : M2XClientMethod.POST, parms, bodyParms);
 		}
 
 		/// <summary>
@@ -362,7 +360,7 @@ namespace ATTM2X
 		{
 			bool isGetOrDelete = method == M2XClientMethod.GET || method == M2XClientMethod.DELETE;
 			string url = BuildUrl(path, isGetOrDelete || addBodyParms != null ? parms : null);
-			string content = isGetOrDelete ? SerializeData(addBodyParms) : SerializeData(addBodyParms ?? parms);
+			string content = isGetOrDelete ? null : SerializeData(addBodyParms ?? parms);
 			return new M2XResponse(new Uri(url), method, content);
 		}
 

@@ -93,8 +93,7 @@ namespace ATTM2X
 			string path = "/values/search";
 			if (!String.IsNullOrEmpty(format))
 				path += "." + format;
-			// TODO: bodyParms?
-			return MakeRequest(path, M2XClientMethod.GET, null, parms);
+			return MakeRequest(path, M2XClientMethod.POST, parms);
 		}
 
 		/// <summary>

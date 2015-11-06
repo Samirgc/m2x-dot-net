@@ -2,6 +2,7 @@
 using ATTM2X.Classes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Threading;
@@ -23,11 +24,6 @@ namespace ATTM2X.Tests
 		[TestMethod]
 		public void DeviceAPITest()
 		{
-			// TODO:
-			// DeviceCatalogSearch
-			// SearchDevices
-			// Device.SearchValues
-
 			// device
 
 			response = m2x.DeviceTags().Result;
@@ -43,13 +39,35 @@ namespace ATTM2X.Tests
 			Assert.IsNotNull(deviceList.devices);
 			Assert.IsTrue(deviceList.devices.Length > 0);
 
+			DeviceDetails deviceDetails = deviceList.devices.FirstOrDefault(d => d.location != null && d.location.latitude.HasValue && d.location.longitude.HasValue);
+			Assert.IsNotNull(deviceDetails);
+			response = m2x.DeviceCatalogSearch(null, new DeviceSearchBodyParamsBase
+			{
+				location = new LocationFilter
+				{
+					within_circle = new WithinCircleFilter
+					{
+						center = new LocationPointParams
+						{
+							latitude = deviceDetails.location.latitude.Value,
+							longitude = deviceDetails.location.longitude.Value,
+						},
+						radius = new RadiusParams { km = 10 },
+					},
+				},
+			}).Result;
+			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+			deviceList = response.Json<DeviceList>();
+			Assert.IsNotNull(deviceList.devices);
+			// TODO: Assert.IsTrue(deviceList.devices.Length > 0);
+
 			response = m2x.CreateDevice(new DeviceParams
 				{
 					name = "TestDevice-" + this.TestId,
 					visibility = M2XVisibility.Private,
 				}).Result;
 			Assert.AreEqual(HttpStatusCode.Created, response.Status, response.Raw);
-			var deviceDetails = response.Json<DeviceDetails>();
+			deviceDetails = response.Json<DeviceDetails>();
 			Assert.IsNotNull(deviceDetails.id);
 			this.device = m2x.Device(deviceDetails.id);
 			Assert.AreEqual(M2XVisibility.Private, deviceDetails.visibility);
@@ -60,12 +78,6 @@ namespace ATTM2X.Tests
 			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
 			deviceDetails = response.Json<DeviceDetails>();
 			Assert.AreEqual(M2XStatus.Enabled, deviceDetails.status);
-
-			response = m2x.Devices(new { visibility = M2XVisibility.Private }).Result;
-			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
-			deviceList = response.Json<DeviceList>();
-			Assert.IsNotNull(deviceList.devices);
-			Assert.IsTrue(deviceList.devices.Length > 0);
 
 			response = device.Update(new DeviceParams
 				{
@@ -93,6 +105,32 @@ namespace ATTM2X.Tests
 			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
 			var location = response.Json<LocationDetails>();
 			Assert.AreEqual("Test Location", location.name);
+
+			response = m2x.Devices(new { visibility = M2XVisibility.Private }).Result;
+			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+			deviceList = response.Json<DeviceList>();
+			Assert.IsNotNull(deviceList.devices);
+			Assert.IsTrue(deviceList.devices.Length > 0);
+
+			response = m2x.SearchDevices(new DeviceSearchParams { visibility = M2XVisibility.Private }, new DeviceSearchBodyParamsBase
+			{
+				location = new LocationFilter
+				{
+					within_circle = new WithinCircleFilter
+					{
+						center = new LocationPointParams
+						{
+							latitude = location.latitude.Value,
+							longitude = location.longitude.Value,
+						},
+						radius = new RadiusParams { km = 10 },
+					},
+				},
+			}).Result;
+			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+			deviceList = response.Json<DeviceList>();
+			Assert.IsNotNull(deviceList.devices);
+			Assert.IsTrue(deviceList.devices.Length > 0);
 
 			response = device.Log().Result;
 			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
@@ -195,10 +233,26 @@ namespace ATTM2X.Tests
 
 			response = device.Values(new DeviceValuesFilter { streams = "testdevicestream" }).Result;
 			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
-			var values = response.Json<TestDeviceValueList>();
+			var values = response.Json<DeviceValueList<TestDeviceValue>>();
 			Assert.IsNotNull(values);
 			Assert.IsNotNull(values.values);
-			Assert.AreEqual(5, values.values.Length);
+			Assert.IsTrue(values.values.Length >= 3);
+			int count = values.values.Length;
+
+			response = device.SearchValues(new DeviceValuesSearchParams<TestDeviceConditions>
+			{
+				start = values.values.Min(v => v.timestamp),
+				end = values.values.Max(v => v.timestamp),
+				streams = "testdevicestream",
+				conditions = new TestDeviceConditions { testdevicestream = new ValueCondition { gt = "1" } },
+			}).Result;
+			// TODO:
+			//Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+			//values = response.Json<DeviceValueList<TestDeviceValue>>();
+			//Assert.IsNotNull(values);
+			//Assert.IsNotNull(values.values);
+			//Assert.IsTrue(values.values.Length > 0);
+			//Assert.IsTrue(values.values.Length < count);
 		}
 
 		[Ignore]
@@ -444,19 +498,6 @@ namespace ATTM2X.Tests
 		}
 
 		[DataContract]
-		private class TestDeviceValueList
-		{
-			[DataMember]
-			public string start;
-			[DataMember]
-			public string end;
-			[DataMember]
-			public int limit;
-			[DataMember]
-			public TestDeviceValue[] values;
-		}
-
-		[DataContract]
 		private class TestDeviceValue
 		{
 			[DataMember]
@@ -484,6 +525,13 @@ namespace ATTM2X.Tests
 		{
 			[DataMember]
 			public StreamValue[] testdevicestream;
+		}
+
+		[DataContract]
+		private class TestDeviceConditions
+		{
+			[DataMember]
+			public ValueCondition testdevicestream;
 		}
 	}
 }

@@ -17,6 +17,13 @@ namespace ATTM2X.Classes
 		public string serial;
 	}
 
+	[DataContract]
+	public class DeviceSearchBodyParamsBase
+	{
+		[DataMember(EmitDefaultValue = false)]
+		public LocationFilter location;
+	}
+
 	public class DeviceSearchParams : DeviceCatalogSearchParams
 	{
 		public string ids;
@@ -156,7 +163,20 @@ namespace ATTM2X.Classes
 	}
 
 	[DataContract]
-	public class DeviceValuesSearchParams
+	public class DeviceValueList<TValue>
+	{
+		[DataMember]
+		public string start;
+		[DataMember]
+		public string end;
+		[DataMember]
+		public int limit;
+		[DataMember]
+		public TValue[] values;
+	}
+
+	[DataContract]
+	public class DeviceValuesSearchParams<TConditions>
 	{
 		[DataMember]
 		public string start;
@@ -164,5 +184,7 @@ namespace ATTM2X.Classes
 		public string end;
 		[DataMember]
 		public string streams;
+		[DataMember]
+		public TConditions conditions;
 	}
 }

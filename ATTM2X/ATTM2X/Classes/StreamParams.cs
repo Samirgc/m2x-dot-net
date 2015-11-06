@@ -106,4 +106,19 @@ namespace ATTM2X.Classes
 		public string from;
 		public string end;
 	}
+
+	[DataContract]
+	public class ValueCondition
+	{
+		[DataMember(EmitDefaultValue = false)]
+		public string gt;
+		[DataMember(EmitDefaultValue = false)]
+		public string gte;
+		[DataMember(EmitDefaultValue = false)]
+		public string lt;
+		[DataMember(EmitDefaultValue = false)]
+		public string lte;
+		[DataMember(EmitDefaultValue = false)]
+		public string eq;
+	}
 }
