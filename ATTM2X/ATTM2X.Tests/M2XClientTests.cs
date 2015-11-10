@@ -243,16 +243,15 @@ namespace ATTM2X.Tests
 			{
 				start = values.values.Min(v => v.timestamp),
 				end = values.values.Max(v => v.timestamp),
-				streams = "testdevicestream",
-				conditions = new TestDeviceConditions { testdevicestream = new ValueCondition { gt = "1" } },
+				streams = new string[] { "testdevicestream" },
+				conditions = new TestDeviceConditions { testdevicestream = new ValueCondition { gt = 1 } },
 			}).Result;
-			// TODO:
-			//Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
-			//values = response.Json<DeviceValueList<TestDeviceValue>>();
-			//Assert.IsNotNull(values);
-			//Assert.IsNotNull(values.values);
-			//Assert.IsTrue(values.values.Length > 0);
-			//Assert.IsTrue(values.values.Length < count);
+			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+			values = response.Json<DeviceValueList<TestDeviceValue>>();
+			Assert.IsNotNull(values);
+			Assert.IsNotNull(values.values);
+			Assert.IsTrue(values.values.Length > 0);
+			Assert.IsTrue(values.values.Length < count);
 		}
 
 		[Ignore]

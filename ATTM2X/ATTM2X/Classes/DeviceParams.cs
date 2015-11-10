@@ -183,7 +183,7 @@ namespace ATTM2X.Classes
 		[DataMember]
 		public string end;
 		[DataMember]
-		public string streams;
+		public string[] streams;
 		[DataMember]
 		public TConditions conditions;
 	}

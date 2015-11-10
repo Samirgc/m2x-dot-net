@@ -111,14 +111,14 @@ namespace ATTM2X.Classes
 	public class ValueCondition
 	{
 		[DataMember(EmitDefaultValue = false)]
-		public string gt;
+		public double? gt;
 		[DataMember(EmitDefaultValue = false)]
-		public string gte;
+		public double? gte;
 		[DataMember(EmitDefaultValue = false)]
-		public string lt;
+		public double? lt;
 		[DataMember(EmitDefaultValue = false)]
-		public string lte;
+		public double? lte;
 		[DataMember(EmitDefaultValue = false)]
-		public string eq;
+		public double? eq;
 	}
 }
