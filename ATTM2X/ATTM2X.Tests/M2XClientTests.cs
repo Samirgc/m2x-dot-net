@@ -487,6 +487,117 @@ namespace ATTM2X.Tests
 			Assert.IsNotNull(response.Raw);
 		}
 
+		[TestMethod]
+		public void CommandsApiTest()
+		{
+			response = m2x.CreateDevice(new DeviceParams
+			{
+				name = "TestDevice-" + this.TestId,
+				visibility = M2XVisibility.Private,
+			}).Result;
+			Assert.AreEqual(HttpStatusCode.Created, response.Status, response.Raw);
+			var deviceDetails = response.Json<DeviceDetails>();
+			Assert.IsNotNull(deviceDetails.id);
+			this.device = m2x.Device(deviceDetails.id);
+			Thread.Sleep(1000);
+
+			string commandName = "TestCommand-" + this.TestId;
+			response = m2x.SendCommand(new SendCommandParams
+			{
+				name = commandName,
+				targets = new CommandTargets { devices = new string[] { deviceDetails.id } },
+			}).Result;
+			Assert.AreEqual(HttpStatusCode.Accepted, response.Status, response.Raw);
+			Thread.Sleep(1000);
+
+			response = m2x.Commands(new CommandParams { name = commandName }).Result;
+			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+			var commands = response.Json<CommandList<CommandDetails>>();
+			Assert.IsNotNull(commands, response.Raw);
+			Assert.IsNotNull(commands.commands, response.Raw);
+			Assert.AreEqual(1, commands.commands.Length, response.Raw);
+			Assert.AreEqual(commandName, commands.commands[0].name, response.Raw);
+			string commandId = commands.commands[0].id;
+			Assert.IsNotNull(commandId, response.Raw);
+
+			response = m2x.CommandDetails(commandId).Result;
+			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+			var command = response.Json<CommandDetails>();
+			Assert.IsNotNull(command, response.Raw);
+			Assert.AreEqual(commandName, command.name, response.Raw);
+
+			response = m2x.Keys(new KeyListParams { device = deviceDetails.id }).Result;
+			Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+			var keys = response.Json<KeyList>();
+			Assert.IsNotNull(keys, response.Raw);
+			Assert.IsNotNull(keys.keys, response.Raw);
+			Assert.AreEqual(1, keys.keys.Length, response.Raw);
+			Assert.IsTrue(keys.keys[0].device.Contains(deviceDetails.id), response.Raw);
+			string key = keys.keys[0].key;
+			Assert.AreEqual(deviceDetails.key, key, response.Raw);
+			Assert.IsNotNull(key, response.Raw);
+
+			using (var deviceClient = new M2XClient(deviceDetails.key))
+			{
+				var device_ = deviceClient.Device(deviceDetails.id);
+
+				response = device_.Commands(new CommandParams { status = M2XCommandStatus.Sent }).Result;
+				Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+				commands = response.Json<CommandList<CommandDetails>>();
+				Assert.IsNotNull(commands, response.Raw);
+				Assert.IsNotNull(commands.commands, response.Raw);
+				Assert.AreEqual(1, commands.commands.Length, response.Raw);
+				Assert.AreEqual(commandName, commands.commands[0].name, response.Raw);
+				Assert.AreEqual(commandId, commands.commands[0].id, response.Raw);
+				Assert.AreEqual(M2XCommandStatus.Sent, commands.commands[0].status, response.Raw);
+
+				response = device_.CommandDetails(commandId).Result;
+				Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+				command = response.Json<CommandDetails>();
+				Assert.IsNotNull(command, response.Raw);
+				Assert.AreEqual(commandName, command.name, response.Raw);
+				Assert.AreEqual(M2XCommandStatus.Sent, command.status, response.Raw);
+
+				response = device_.ProcessCommand(commandId).Result;
+				Assert.AreEqual(HttpStatusCode.NoContent, response.Status, response.Raw);
+				Thread.Sleep(1000);
+				response = device_.CommandDetails(commandId).Result;
+				Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+				command = response.Json<CommandDetails>();
+				Assert.IsNotNull(command, response.Raw);
+				Assert.AreEqual(commandName, command.name, response.Raw);
+				Assert.AreEqual(M2XCommandStatus.Processed, command.status, response.Raw);
+
+				commandName = "TestCommand2-" + this.TestId;
+				response = m2x.SendCommand(new SendCommandParams
+				{
+					name = commandName,
+					targets = new CommandTargets { devices = new string[] { deviceDetails.id } },
+				}).Result;
+				Assert.AreEqual(HttpStatusCode.Accepted, response.Status, response.Raw);
+				Thread.Sleep(1000);
+
+				response = device_.Commands(new CommandParams { status = M2XCommandStatus.Sent }).Result;
+				Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+				commands = response.Json<CommandList<CommandDetails>>();
+				Assert.IsNotNull(commands, response.Raw);
+				Assert.IsNotNull(commands.commands, response.Raw);
+				Assert.AreEqual(1, commands.commands.Length, response.Raw);
+				Assert.AreEqual(commandName, commands.commands[0].name, response.Raw);
+				commandId = commands.commands[0].id;
+
+				response = device_.RejectCommand(commandId).Result;
+				Assert.AreEqual(HttpStatusCode.NoContent, response.Status, response.Raw);
+				Thread.Sleep(1000);
+				response = device_.CommandDetails(commandId).Result;
+				Assert.AreEqual(HttpStatusCode.OK, response.Status, response.Raw);
+				command = response.Json<CommandDetails>();
+				Assert.IsNotNull(command, response.Raw);
+				Assert.AreEqual(commandName, command.name, response.Raw);
+				Assert.AreEqual(M2XCommandStatus.Rejected, command.status, response.Raw);
+			}
+		}
+
 		[DataContract]
 		private class TestMetadata
 		{

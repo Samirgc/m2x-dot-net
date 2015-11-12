@@ -255,7 +255,7 @@ namespace ATTM2X
 		/// </summary>
 		public Task<M2XResponse> JobDetails(string jobId)
 		{
-			return MakeRequest("/jobs/" + WebUtility.UrlEncode(jobId), M2XClientMethod.GET);
+			return MakeRequest("/jobs/" + WebUtility.UrlEncode(jobId));
 		}
 
 		// Time API
@@ -271,6 +271,38 @@ namespace ATTM2X
 			if (!String.IsNullOrEmpty(format))
 				path += "/" + WebUtility.UrlEncode(format);
 			return MakeRequest(path);
+		}
+
+		// Commands API
+
+		/// <summary>
+		/// Retrieve the list of recent commands sent by the current user (as given by the API key).
+		///
+		/// https://m2x.att.com/developer/documentation/v2/commands#List-Sent-Commands
+		/// </summary>
+		public Task<M2XResponse> Commands(object parms = null)
+		{
+			return MakeRequest("/commands", M2XClientMethod.GET, parms);
+		}
+
+		/// <summary>
+		/// Send a command with the given name to the given target devices.
+		///
+		/// https://m2x.att.com/developer/documentation/v2/commands#Send-Command
+		/// </summary>
+		public Task<M2XResponse> SendCommand(object parms)
+		{
+			return MakeRequest("/commands", M2XClientMethod.POST, parms);
+		}
+
+		/// <summary>
+		/// Get details of a sent command including the delivery information for all devices that were targetted by the command at the time it was sent.
+		///
+		/// https://m2x.att.com/developer/documentation/v2/commands#View-Command-Details
+		/// </summary>
+		public Task<M2XResponse> CommandDetails(string commandId)
+		{
+			return MakeRequest("/commands/" + WebUtility.UrlEncode(commandId));
 		}
 
 		// Common

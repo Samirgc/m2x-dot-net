@@ -89,4 +89,11 @@ namespace ATTM2X
 		public const string Csv = "csv";
 		public const string Msgpack = "msgpack";
 	}
+
+	public static class M2XCommandStatus
+	{
+		public const string Sent = "sent";
+		public const string Processed = "processed";
+		public const string Rejected = "rejected";
+	}
 }

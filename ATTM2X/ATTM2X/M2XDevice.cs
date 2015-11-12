@@ -135,5 +135,45 @@ namespace ATTM2X
 		{
 			return MakeRequest("/log", M2XClientMethod.GET, parms);
 		}
+
+		/// <summary>
+		/// Retrieve the list of recent commands sent to the current device (as given by the API key).
+		///
+		/// https://m2x.att.com/developer/documentation/v2/commands#Device-s-List-of-Received-Commands
+		/// </summary>
+		public Task<M2XResponse> Commands(object parms = null)
+		{
+			return MakeRequest("/commands", M2XClientMethod.GET, parms);
+		}
+
+		/// <summary>
+		/// Get details of a received command including the delivery information for this device.
+		///
+		/// https://m2x.att.com/developer/documentation/v2/commands#Device-s-View-of-Command-Details
+		/// </summary>
+		public Task<M2XResponse> CommandDetails(string commandId)
+		{
+			return MakeRequest("/commands/" + WebUtility.UrlEncode(commandId));
+		}
+
+		/// <summary>
+		/// Mark the given command as processed by the device, changing the status from "sent" to "processed".
+		///
+		/// https://m2x.att.com/developer/documentation/v2/commands#Device-Marks-a-Command-as-Processed
+		/// </summary>
+		public Task<M2XResponse> ProcessCommand(string commandId, object parms = null)
+		{
+			return MakeRequest(String.Concat("/commands/", WebUtility.UrlEncode(commandId), "/process"), M2XClientMethod.POST, parms);
+		}
+
+		/// <summary>
+		/// Mark the given command as rejected by the device, changing the status from "sent" to "rejected".
+		///
+		/// https://m2x.att.com/developer/documentation/v2/commands#Device-Marks-a-Command-as-Rejected
+		/// </summary>
+		public Task<M2XResponse> RejectCommand(string commandId, object parms = null)
+		{
+			return MakeRequest(String.Concat("/commands/", WebUtility.UrlEncode(commandId), "/reject"), M2XClientMethod.POST, parms);
+		}
 	}
 }

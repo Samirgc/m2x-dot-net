@@ -3,6 +3,13 @@ using System.Runtime.Serialization;
 
 namespace ATTM2X.Classes
 {
+	public class KeyListParams
+	{
+		public string device;
+		public string destribution;
+		public string collection;
+	}
+
 	public class KeyList
 	{
 		public KeyDetails[] keys;

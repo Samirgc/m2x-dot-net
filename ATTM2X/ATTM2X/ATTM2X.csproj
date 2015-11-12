@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\CollectionParams.cs" />
+    <Compile Include="Classes\CommandParams.cs" />
     <Compile Include="Classes\DeviceParams.cs" />
     <Compile Include="Classes\DistributionParams.cs" />
     <Compile Include="Classes\ErrorInfo.cs" />
