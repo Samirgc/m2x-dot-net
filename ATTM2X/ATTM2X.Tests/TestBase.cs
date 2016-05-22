@@ -6,6 +6,7 @@ using System.Net;
 
 namespace ATTM2X.Tests
 {
+	[TestClass]
 	public class TestBase
 	{
 		protected static readonly string MasterKey = ConfigurationManager.AppSettings["ApiMasterKey"];
