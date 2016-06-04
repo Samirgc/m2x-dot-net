@@ -628,5 +628,56 @@ namespace ATTM2X.Tests
 		public int pending { get; set; }
 	}
 
-	#endregion " Response Objects "
+		public class Device
+	{
+		public string url { get; set; }
+		public string name { get; set; }
+		public string status { get; set; }
+		public object serial { get; set; }
+		public object[] tags { get; set; }
+		public string visibility { get; set; }
+		public object description { get; set; }
+		public DateTime created { get; set; }
+		public DateTime updated { get; set; }
+		public DateTime last_activity { get; set; }
+		public Location location { get; set; }
+		public string id { get; set; }
+		public Streams streams { get; set; }
+		public object metadata { get; set; }
+		public string key { get; set; }
+		public Triggers triggers { get; set; }
+	}
+
+	public class Location
+	{
+		public string name { get; set; }
+		public float latitude { get; set; }
+		public float longitude { get; set; }
+		public string elevation { get; set; }
+		public DateTime timestamp { get; set; }
+		public Waypoint[] waypoints { get; set; }
+	}
+
+	public class Streams
+	{
+		public int count { get; set; }
+		public string url { get; set; }
+	}
+
+	public class Triggers
+	{
+		public int count { get; set; }
+		public string url { get; set; }
+	}
+
+	public class Waypoint
+	{
+		public string name { get; set; }
+		public float latitude { get; set; }
+		public float longitude { get; set; }
+		public string elevation { get; set; }
+		public DateTime timestamp { get; set; }
+	}
+
+	#endregion " Response Classes 
 }
