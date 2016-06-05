@@ -1,7 +1,7 @@
 AT&T's M2X .NET Client
 ========================
 
-[AT&T M2X](http://m2x.att.com) is a cloud-based fully managed time-series data storage service for network connected machine-to-machine (M2M) devices and the Internet of Things (IoT). 
+[AT&T M2X](http://m2x.att.com) is a cloud-based fully managed time-series data storage service for network connected machine-to-machine (M2M) devices and the Internet of Things (IoT).
 
 The [AT&T M2X API](https://m2x.att.com/developer/documentation/overview) provides all the needed operations and methods to connect your devices to AT&T's M2X service. This library aims to provide a simple wrapper to interact with the AT&T M2X API for [.NET](http://www.microsoft.com/net). Refer to the [Glossary of Terms](https://m2x.att.com/developer/documentation/glossary) to understand the nomenclature used throughout this documentation.
 
@@ -19,7 +19,7 @@ Installation and System Requirements
 The M2X .NET Client library is a Portable Class Library. Visual Studio support for the Portable Class Library depends on the version of Visual Studio that you are using.
 In some cases, you'll have everything you need, and in other cases, you'll need to install additional items, as shown in the table available here: http://msdn.microsoft.com/en-us/library/gg597391(v=vs.110).aspx.
 
-You will also need .NET Framework version 4.5, which can be downloaded here: http://www.microsoft.com/en-us/download/details.aspx?id=30653. 
+You will also need .NET Framework version 4.5, which can be downloaded here: http://www.microsoft.com/en-us/download/details.aspx?id=30653.
 
 To begin, simple add the M2X .NET client library as an Existing Project into your VS solution or if you are using a different version of Visual Studio you can create a new class library project and include the content of the [ATTM2X/ATTM2X](https://github.com/attm2x/m2x-dot-net/tree/master/ATTM2X/ATTM2X) folder in it.
 
@@ -29,7 +29,6 @@ System requirements match those for .NET Framework 4.5.
 
  - Supported Operating System:
 
-		Windows 7 Service Pack 1, Windows Server 2008 R2 SP1, Windows Server 2008 Service Pack 2, Windows Vista Service Pack 2
 		Windows Vista SP2 (x86 and x64)
 		Windows 7 SP1 (x86 and x64)
 		Windows Server 2008 R2 SP1 (x64)
@@ -89,43 +88,49 @@ Example
 
  - Create a client instance:
 
-		using ATTM2X;
+```csharp
+	using ATTM2X;
 
-		M2XClient client = new M2XClient("[API Key]");
+	M2XClient client = new M2XClient("<YOUR-API-KEY>");
+```
 
  - Get the list of all your keys:
 
-		using ATTM2X.Classes;
+```csharp
+	using ATTM2X.Classes;
 
-		M2XResponse response = client.Keys().Result;
-		var keyList = response.Json<KeyList>();
-		Console.WriteLine("Number of keys is " + keyList.keys.Length);
-
+	M2XResponse response = client.Keys().Result;
+	var keyList = response.Json<KeyList>();
+	Console.WriteLine("Number of keys is " + keyList.keys.Length);
+```
  - Get an instance of a device and its location details:
 
-		M2XDevice device = client.Device("[Device id]");
-		response = device.Location().Result;
-		var location = response.Json<LocationDetails>();
-		Console.WriteLine("Location name is " + location.name);
+```csharp
+	M2XDevice device = client.Device("[Device id]");
+	response = device.Location().Result;
+	var location = response.Json<LocationDetails>();
+	Console.WriteLine("Location name is " + location.name);
+```
 
  - Create a new device, stream and put current value into it:
 
- 		response = m2x.CreateDevice(new DeviceParams
-		{
-			name = "[Device name]",
-			visibility = M2XVisibility.Public,
-		}).Result;
-		var deviceDetails = response.Json<DeviceDetails>();
-		device = m2x.Device(deviceDetails.id);
+```csharp
+	response = m2x.CreateDevice(new DeviceParams {
+		name = "[Device name]",
+		visibility = M2XVisibility.Public,
+	}).Result;
 
-		M2XStream stream = device.Stream("[Stream name]");
-		response = stream.Update(new StreamParams
-		{
-			type = M2XStreamType.Numeric,
-			unit = new StreamUnit { label = "points", symbol = "pt" },
-		}).Result;
+	var deviceDetails = response.Json<DeviceDetails>();
+	device = m2x.Device(deviceDetails.id);
 
-		response = stream.UpdateValue(new StreamValue { value = "10" }).Result;
+	M2XStream stream = device.Stream("[Stream name]");
+	response = stream.Update(new StreamParams	{
+		type = M2XStreamType.Numeric,
+		unit = new StreamUnit { label = "points", symbol = "pt" },
+	}).Result;
+
+	response = stream.UpdateValue(new StreamValue { value = "10" }).Result;
+```
 
 Tests project
 ==========================
