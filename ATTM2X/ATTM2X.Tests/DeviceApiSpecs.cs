@@ -13,7 +13,7 @@ namespace ATTM2X.Tests
 	public class DeviceApiSpecs
 	{
 		private static readonly string _masterKey = ConfigurationManager.AppSettings["ApiMasterKey"];
-		
+
 		private static readonly string _testDeviceTestStreamName = Constants.TestStreamName001;
 
 		private static string _testDeviceId { get; set; }
@@ -39,8 +39,11 @@ namespace ATTM2X.Tests
 				var testDevice = client.Device(device.id);
 				var updateTagsParms = "{ \"tags\": \"test only\" }";
 				var resultTags = testDevice.Update(updateTagsParms).Result;
-				var updateLocationParms = $"{{ \"name\": \"Test Device Location\", \"latitude\": {Constants.TestDeviceLatitude}, \"longitude\": {Constants.TestDeviceLongitude} }}";
-				var resultLocation = testDevice.UpdateLocation(updateLocationParms).Result;
+				for (var i = 0; i < 5; i++)
+				{
+					var updateLocationParms = $"{{ \"name\": \"Test Device Location{i + 1}\", \"latitude\": {(Constants.TestDeviceLatitude + i)}, \"longitude\": {(Constants.TestDeviceLongitude + i)} }}";
+					var resultLocation = testDevice.UpdateLocation(updateLocationParms).Result;
+				}
 				var updateMetadataParms = "{ \"owner\": \"The Testing Guy\" } ";
 				var resultMetadata = testDevice.UpdateMetadata(updateMetadataParms);
 
@@ -1041,22 +1044,23 @@ namespace ATTM2X.Tests
 			}
 		}
 
-		[TestMethod, Ignore] // todo: remove the Ignore attribute when the Device.LocationHistory() method has been added.
+		[TestMethod] // todo: remove the Ignore attribute when the Device.LocationHistory() method has been added.
 		public async Task CanAccess_ApiKey_SingleDevice_ById_AndView_LocationHistory()
 		{
 			using (var client = new M2XClient(_masterKey))
 			{
 				var device = client.Device(_testLocationDeviceId);
-				var result = await device.Location();
+				var result = await device.LocationHistory();
 				Assert.IsNotNull(result);
 				Assert.IsFalse(result.Error);
 				Assert.IsFalse(result.ServerError);
 				Assert.IsNull(result.WebError);
 				Assert.IsFalse(string.IsNullOrWhiteSpace(result.Raw));
-				var deviceLocation = JsonConvert.DeserializeObject<Location>(result.Raw);
-				Assert.IsNotNull(deviceLocation);
-				Assert.IsTrue(deviceLocation.latitude != 0);
-				Assert.IsTrue(deviceLocation.longitude != 0);
+				var deviceLocationHistory = JsonConvert.DeserializeObject<LocationHistory>(result.Raw);
+				Assert.IsNotNull(deviceLocationHistory);
+				Assert.IsNotNull(deviceLocationHistory.waypoints, "Please add at least one location entry to your device.");
+				Assert.IsTrue(deviceLocationHistory.waypoints.All(a => a.latitude != 0));
+				Assert.IsTrue(deviceLocationHistory.waypoints.All(a => a.longitude != 0));
 			}
 		}
 
@@ -1823,6 +1827,11 @@ namespace ATTM2X.Tests
 			public float longitude { get; set; }
 			public string elevation { get; set; }
 			public DateTime timestamp { get; set; }
+		}
+
+		public class LocationHistory
+		{
+			public IEnumerable<Waypoint> waypoints { get; set; }
 		}
 
 		#endregion " Response Classes 
