@@ -63,6 +63,20 @@ namespace ATTM2X
 		}
 
 		/// <summary>
+		/// Delete the Location History details of an existing Device for a specified date range.
+		///
+		/// https://m2x.att.com/developer/documentation/v2/device#Delete-Location-History
+		/// </summary>
+		public Task<M2XResponse> DeleteLocationHistory(DateTime from, DateTime end)
+		{
+			//var deleteBodyParams = $"{{ \"from\": \"{from.ToString(M2XClient.DateTimeFormat)}\", \"end\": \"{end.ToString(M2XClient.DateTimeFormat)}\" }}";
+			var fromValue = from.ToString("yyyy-MM-ddTHH:mm:ss.000Z");
+			var toValue = end.ToString("yyyy-MM-ddTHH:mm:ss.999Z");
+			var deleteParams = new { from = fromValue, end = toValue };
+			return MakeRequest("/location/waypoints", M2XClientMethod.DELETE, parms: deleteParams);
+		}
+
+		/// <summary>
 		/// Retrieve list of data streams associated with the device.
 		///
 		/// https://m2x.att.com/developer/documentation/v2/device#List-Data-Streams
