@@ -57,7 +57,7 @@ namespace ATTM2X
 		/// https://m2x.att.com/developer/documentation/v2/device#Delete-Data-Stream
 		/// https://m2x.att.com/developer/documentation/v2/distribution#Delete-Data-Stream
 		/// </summary>
-		public Task<M2XResponse> Delete()
+		public virtual Task<M2XResponse> Delete()
 		{
 			return MakeRequest(null, M2XClientMethod.DELETE);
 		}

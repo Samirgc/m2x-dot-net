@@ -17,15 +17,58 @@ namespace ATTM2X
 		internal M2XCollection(M2XClient client, string collectionId)
 			: base(client)
 		{
-			if (String.IsNullOrWhiteSpace(collectionId))
-				throw new ArgumentException(String.Format("Invalid collectionId - {0}", collectionId));
+			if (string.IsNullOrWhiteSpace(collectionId))
+				throw new ArgumentException(string.Format("Invalid collectionId - {0}", collectionId));
 
 			this.CollectionId = collectionId;
 		}
 
 		internal override string BuildPath(string path)
 		{
-			return String.Concat(M2XCollection.UrlPath, "/", WebUtility.UrlEncode(this.CollectionId), path);
+			var pathContainsId = !string.IsNullOrWhiteSpace(path) && path.Contains(UrlPath) && !string.IsNullOrWhiteSpace(CollectionId) && path.Contains(CollectionId);
+			return string.Concat(pathContainsId ? string.Empty : $"{M2XCollection.UrlPath}/{WebUtility.UrlEncode(CollectionId)}", path);
+		}
+
+		/// <summary>
+		/// Retrieve a list of collections accessible by the authenticated user.
+		///
+		/// https://m2x.att.com/developer/documentation/v2/collections#List-collections
+		/// </summary>
+		public Task<M2XResponse> Collections(object parms = null)
+		{
+			return MakeRequest(UrlPath, M2XClientMethod.GET, parms);
+		}
+
+		/// <summary>
+		/// Create a new collection.
+		/// 
+		/// https://m2x.att.com/developer/documentation/v2/collections#Create-Collection
+		/// </summary>
+		public Task<M2XResponse> CreateCollection(object parms)
+		{
+			return MakeRequest(UrlPath, M2XClientMethod.POST, parms);
+		}
+
+		/// <summary>
+		/// Add an existing Device to the current Collection
+		///
+		/// https://m2x.att.com/developer/documentation/v2/collections#Add-device-to-collection
+		/// </summary>
+		public Task<M2XResponse> AddDevice(string deviceId)
+		{
+			var path = BuildPath($"{M2XDevice.UrlPath}/{deviceId}");
+			return MakeRequest(path, M2XClientMethod.PUT);
+		}
+
+		/// <summary>
+		/// Remove a Device fro the current Collection
+		///
+		/// https://m2x.att.com/developer/documentation/v2/collections#Remove-device-from-collection
+		/// </summary>
+		public Task<M2XResponse> RemoveDevice(string deviceId)
+		{
+			var path = BuildPath($"{M2XDevice.UrlPath}/{deviceId}");
+			return MakeRequest(path, M2XClientMethod.DELETE);
 		}
 	}
 }

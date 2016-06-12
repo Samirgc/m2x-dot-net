@@ -1704,129 +1704,127 @@ namespace ATTM2X.Tests
 		//	}
 		//}
 
+		#region " Response Classes "
+
+		public class ApiResponseForNumericStream
+		{
+			public int limit { get; set; }
+			public DateTime end { get; set; }
+			public Value[] values { get; set; }
+		}
+
+		public class ApiResponseForDeviceSearch
+		{
+			public Device[] devices { get; set; }
+			public int total { get; set; }
+			public int pages { get; set; }
+			public int limit { get; set; }
+			public int current_page { get; set; }
+		}
+
+		public class ApiResponseForTagsQuery
+		{
+			public object tags { get; set; }
+		}
+
+		public class Device
+		{
+			public string url { get; set; }
+			public string name { get; set; }
+			public string status { get; set; }
+			public object serial { get; set; }
+			public object[] tags { get; set; }
+			public string visibility { get; set; }
+			public object description { get; set; }
+			public DateTime created { get; set; }
+			public DateTime updated { get; set; }
+			public DateTime last_activity { get; set; }
+			public Location location { get; set; }
+			public string id { get; set; }
+			public Streams streams { get; set; }
+			public object metadata { get; set; }
+			public string key { get; set; }
+			public Triggers triggers { get; set; }
+		}
+
+		public class Location
+		{
+			public string name { get; set; }
+			public float latitude { get; set; }
+			public float longitude { get; set; }
+			public string elevation { get; set; }
+			public DateTime timestamp { get; set; }
+			public Waypoint[] waypoints { get; set; }
+		}
+
+		public class M2XTime
+		{
+			public int seconds { get; set; }
+			public long millis { get; set; }
+			public DateTime iso8601 { get; set; }
+		}
+
+		public class Stream
+		{
+			public string name { get; set; }
+			public string display_name { get; set; }
+			public string value { get; set; }
+			public DateTime latest_value_at { get; set; }
+			public string type { get; set; }
+			public Unit unit { get; set; }
+			public string url { get; set; }
+			public DateTime created { get; set; }
+			public DateTime updated { get; set; }
+		}
+
+		public class Streams
+		{
+			public int count { get; set; }
+			public string url { get; set; }
+		}
+
+		public class StreamStats
+		{
+			public DateTime end { get; set; }
+			public Stats stats { get; set; }
+		}
+
+		public class Stats
+		{
+			public float count { get; set; }
+			public float min { get; set; }
+			public float max { get; set; }
+			public float avg { get; set; }
+			public float stddev { get; set; }
+		}
+
+		public class Triggers
+		{
+			public int count { get; set; }
+			public string url { get; set; }
+		}
+
+		public class Value
+		{
+			public DateTime timestamp { get; set; }
+			public float value { get; set; }
+		}
+
+		public class Unit
+		{
+			public object label { get; set; }
+			public object symbol { get; set; }
+		}
+
+		public class Waypoint
+		{
+			public string name { get; set; }
+			public float latitude { get; set; }
+			public float longitude { get; set; }
+			public string elevation { get; set; }
+			public DateTime timestamp { get; set; }
+		}
+
+		#endregion " Response Classes 
 	}
-
-
-	#region " Response Classes "
-
-	public class ApiResponseForNumericStream
-	{
-		public int limit { get; set; }
-		public DateTime end { get; set; }
-		public Value[] values { get; set; }
-	}
-
-	public class ApiResponseForDeviceSearch
-	{
-		public Device[] devices { get; set; }
-		public int total { get; set; }
-		public int pages { get; set; }
-		public int limit { get; set; }
-		public int current_page { get; set; }
-	}
-
-	public class ApiResponseForTagsQuery
-	{
-		public object tags { get; set; }
-	}
-
-	public class Device
-	{
-		public string url { get; set; }
-		public string name { get; set; }
-		public string status { get; set; }
-		public object serial { get; set; }
-		public object[] tags { get; set; }
-		public string visibility { get; set; }
-		public object description { get; set; }
-		public DateTime created { get; set; }
-		public DateTime updated { get; set; }
-		public DateTime last_activity { get; set; }
-		public Location location { get; set; }
-		public string id { get; set; }
-		public Streams streams { get; set; }
-		public object metadata { get; set; }
-		public string key { get; set; }
-		public Triggers triggers { get; set; }
-	}
-
-	public class Location
-	{
-		public string name { get; set; }
-		public float latitude { get; set; }
-		public float longitude { get; set; }
-		public string elevation { get; set; }
-		public DateTime timestamp { get; set; }
-		public Waypoint[] waypoints { get; set; }
-	}
-
-	public class M2XTime
-	{
-		public int seconds { get; set; }
-		public long millis { get; set; }
-		public DateTime iso8601 { get; set; }
-	}
-
-	public class Stream
-	{
-		public string name { get; set; }
-		public string display_name { get; set; }
-		public string value { get; set; }
-		public DateTime latest_value_at { get; set; }
-		public string type { get; set; }
-		public Unit unit { get; set; }
-		public string url { get; set; }
-		public DateTime created { get; set; }
-		public DateTime updated { get; set; }
-	}
-
-	public class Streams
-	{
-		public int count { get; set; }
-		public string url { get; set; }
-	}
-
-	public class StreamStats
-	{
-		public DateTime end { get; set; }
-		public Stats stats { get; set; }
-	}
-
-	public class Stats
-	{
-		public float count { get; set; }
-		public float min { get; set; }
-		public float max { get; set; }
-		public float avg { get; set; }
-		public float stddev { get; set; }
-	}
-
-	public class Triggers
-	{
-		public int count { get; set; }
-		public string url { get; set; }
-	}
-
-	public class Value
-	{
-		public DateTime timestamp { get; set; }
-		public float value { get; set; }
-	}
-
-	public class Unit
-	{
-		public object label { get; set; }
-		public object symbol { get; set; }
-	}
-
-	public class Waypoint
-	{
-		public string name { get; set; }
-		public float latitude { get; set; }
-		public float longitude { get; set; }
-		public string elevation { get; set; }
-		public DateTime timestamp { get; set; }
-	}
-
-	#endregion " Response Classes 
 }

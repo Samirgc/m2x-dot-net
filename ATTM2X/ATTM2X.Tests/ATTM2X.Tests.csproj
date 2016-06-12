@@ -59,6 +59,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="CollectionApiSpecs.cs" />
     <Compile Include="CommandApiSpecs.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DeviceApiSpecs.cs" />

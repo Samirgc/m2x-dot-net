@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace ATTM2X.Tests
 {
-	[TestClass]
+	[TestClass, Ignore] // todo: to be revisted once api has been revised.
 	public class M2XClientTests : TestBase
 	{
 		[TestMethod]
