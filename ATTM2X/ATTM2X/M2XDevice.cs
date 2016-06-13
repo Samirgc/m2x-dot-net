@@ -53,6 +53,16 @@ namespace ATTM2X
 		}
 
 		/// <summary>
+		/// Get location details of an existing Device.
+		///
+		/// https://m2x.att.com/developer/documentation/v2/device#Read-Device-Location
+		/// </summary>
+		public Task<M2XResponse> LocationHistory()
+		{
+			return MakeRequest("/location/waypoints");
+		}
+
+		/// <summary>
 		/// Retrieve list of data streams associated with the device.
 		///
 		/// https://m2x.att.com/developer/documentation/v2/device#List-Data-Streams
