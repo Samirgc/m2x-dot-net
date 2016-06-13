@@ -1044,7 +1044,7 @@ namespace ATTM2X.Tests
 			}
 		}
 
-		[TestMethod] // todo: remove the Ignore attribute when the Device.LocationHistory() method has been added.
+		[TestMethod]
 		public async Task CanAccess_ApiKey_SingleDevice_ById_AndView_LocationHistory()
 		{
 			using (var client = new M2XClient(_masterKey))
@@ -1061,6 +1061,45 @@ namespace ATTM2X.Tests
 				Assert.IsNotNull(deviceLocationHistory.waypoints, "Please add at least one location entry to your device.");
 				Assert.IsTrue(deviceLocationHistory.waypoints.All(a => a.latitude != 0));
 				Assert.IsTrue(deviceLocationHistory.waypoints.All(a => a.longitude != 0));
+
+				var locationUpdateCount = 10;
+				var basis = DateTime.Now.AddYears(-5);
+				var startTime = new DateTime(basis.Year, basis.Month, basis.Day, basis.Hour, basis.Minute, 0);
+				DateTime endTime = default(DateTime);
+				for (var i = 0; i < locationUpdateCount; i++)
+				{
+					endTime = startTime.AddHours(i);
+					var updateLocationParms = $"{{ \"name\": \"Test Device Location{i + 1}\", \"latitude\": {(Constants.TestDeviceLatitude + i)}, \"longitude\": {(Constants.TestDeviceLongitude + i)}, \"timestamp\": \"{endTime.ToString("yyyy-MM-ddTHH:mm:00.000Z")}\" }}";
+					var resultLocation = await device.UpdateLocation(updateLocationParms);
+					Assert.IsNotNull(resultLocation);
+				}
+				await Task.Delay(3000); // required to let server processing catch up.
+
+				var resultPostUpdate = await device.LocationHistory();
+				var deviceLocationHistoryPostUpdate = JsonConvert.DeserializeObject<LocationHistory>(resultPostUpdate.Raw);
+				Assert.IsNotNull(deviceLocationHistoryPostUpdate);
+				Assert.IsTrue(deviceLocationHistoryPostUpdate.waypoints.Count() > deviceLocationHistory.waypoints.Count());
+
+				var deleteResult = await device.DeleteLocationHistory(startTime, endTime);
+				Assert.IsNotNull(deleteResult);
+				Assert.IsTrue(deleteResult.Headers.ToString().Contains("Accept"));
+
+				// due to the variability of message processing timing in the API, the confidence with the remainder of this test is 100% only while debugging.
+				// hence, it is commented out here but left in for those developers who wish to ensure that their delete code is working properly.
+
+				/*
+				
+				await Task.Delay(5000); // required to let server processing catch up.
+
+				var deviceLocationHistoryPostDeleteResult = await device.LocationHistory();
+				Assert.IsNotNull(deviceLocationHistoryPostDeleteResult);
+				var deviceLocationHistoryPostDelete = JsonConvert.DeserializeObject<LocationHistory>(deviceLocationHistoryPostDeleteResult.Raw);
+				Assert.IsNotNull(deviceLocationHistoryPostDelete);
+				Assert.IsNotNull(deviceLocationHistoryPostDelete.waypoints, "Please add at least one location entry to your device.");
+				Assert.IsTrue(deviceLocationHistoryPostUpdate.waypoints.Count() > deviceLocationHistoryPostDelete.waypoints.Count());
+				Assert.IsTrue(deviceLocationHistoryPostDelete.waypoints.Count() >= deviceLocationHistory.waypoints.Count());
+
+				*/
 			}
 		}
 
@@ -1198,7 +1237,7 @@ namespace ATTM2X.Tests
 			}
 		}
 
-		[TestMethod, Ignore] // todo: remove the Ignore attribute when the Stream.Update() method has been fixed.
+		[TestMethod]
 		public async Task CanAccess_ApiKey_SingleDevice_ById_AndCreate_NewSteam_ThenAddValues_ThenDelete_ThatStream()
 		{
 			var testStreamName = "TestStream01";
@@ -1213,12 +1252,7 @@ namespace ATTM2X.Tests
 				Assert.IsFalse(result.ServerError);
 				Assert.IsNull(result.WebError);
 				Assert.IsFalse(string.IsNullOrWhiteSpace(result.Raw));
-			}
 
-			using (var client = new M2XClient(_masterKey))
-			{
-				var device = client.Device(_testLocationDeviceId);
-				var stream = device.Stream(testStreamName);
 				var valueParms00 = $"{{ \"values\": [ {{ \"timestamp\": \"{DateTime.Now.AddSeconds(-10).ToString("yyyy-MM-ddTHH:mm:ssZ")}\", \"value\": \"Eureka! It Works!\" }}, {{ \"timestamp\": \"{DateTime.Now.AddSeconds(-5).ToString("yyyy-MM-ddTHH:mm:ssZ")}\", \"value\": \"Eureka! Thi one works too!\" }} ] }}";
 				var resultValue00 = await stream.PostValues(valueParms00);
 				var checkDetails = await stream.Details();
@@ -1229,28 +1263,18 @@ namespace ATTM2X.Tests
 				Assert.IsFalse(string.IsNullOrWhiteSpace(resultValue00.Raw));
 				Assert.IsTrue(resultValue00.Raw.Length > 6);
 				Assert.IsFalse(string.IsNullOrWhiteSpace(checkDetails.Raw));
-			}
 
-			using (var client = new M2XClient(_masterKey))
-			{
-				var device = client.Device(_testLocationDeviceId);
-				var stream = device.Stream(testStreamName);
 				var valueParms01 = $"{{ \"timestamp\": \"{DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ")}\", \"value\": \"Eureka! It Works AGAIN!\" }}";
-				var resultValue01 = await stream.Update(valueParms01);
-				var checkDetails = await stream.Details();
+				var resultValue01 = await stream.UpdateValue(valueParms01);
+				var checkDetailsValue01 = await stream.Details();
 				Assert.IsNotNull(resultValue01);
 				Assert.IsFalse(resultValue01.Error);
 				Assert.IsFalse(resultValue01.ServerError);
 				Assert.IsNull(resultValue01.WebError);
 				Assert.IsFalse(string.IsNullOrWhiteSpace(resultValue01.Raw));
 				Assert.IsTrue(resultValue01.Raw.Length > 6);
-				Assert.IsFalse(string.IsNullOrWhiteSpace(checkDetails.Raw));
-			}
+				Assert.IsFalse(string.IsNullOrWhiteSpace(checkDetailsValue01.Raw));
 
-			using (var client = new M2XClient(_masterKey))
-			{
-				var device = client.Device(_testLocationDeviceId);
-				var stream = device.Stream(testStreamName);
 				var reset = await stream.Delete();
 				Assert.IsNotNull(reset);
 				Assert.IsFalse(reset.Error);
