@@ -64,6 +64,7 @@
     <Compile Include="CommandApiSpecs.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DeviceApiSpecs.cs" />
+    <Compile Include="DistributionApiSpecs.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="M2XClientTests.cs" />

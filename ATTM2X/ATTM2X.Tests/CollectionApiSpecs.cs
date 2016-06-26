@@ -209,6 +209,141 @@ namespace ATTM2X.Tests
 			}
 		}
 
+		[TestMethod]
+		public async Task CanAccess_ApiKey_SingleCollection_ById_AndView_AllMetadata()
+		{
+			using (var client = new M2XClient(_masterKey))
+			{
+				var collectionParameters = $"{{ \"name\": \"*** PLEASE DELETE ME *** Test Auto Created Collection {DateTime.UtcNow.Ticks}\", \"metadata\": {{ \"{Constants.TestMetadataDefaultFieldName}\": \"{Constants.TestMetadataDefaultFieldValue}\" }} }}";
+				var createCollectionResult = await client.CreateCollection(collectionParameters);
+
+				Assert.IsNotNull(createCollectionResult);
+				Assert.IsFalse(createCollectionResult.Error);
+				Assert.IsFalse(createCollectionResult.ServerError);
+				Assert.IsNull(createCollectionResult.WebError);
+				Assert.IsFalse(string.IsNullOrWhiteSpace(createCollectionResult.Raw));
+
+				var collectionData = JsonConvert.DeserializeObject<Collection>(createCollectionResult.Raw);
+				var collection = client.Collection(collectionData.id);
+
+				var result = await collection.Metadata();
+				Assert.IsNotNull(result);
+				Assert.IsFalse(result.Error);
+				Assert.IsFalse(result.ServerError);
+				Assert.IsNull(result.WebError);
+				Assert.IsFalse(string.IsNullOrWhiteSpace(result.Raw));
+				Assert.IsTrue(result.Raw.Length > 6);
+				
+				var deleteCollectionResult = await collection.Delete();
+				RequestWasProcessedAndReturnedExpectedValue(deleteCollectionResult);
+			}
+		}
+
+		[TestMethod]
+		public async Task CanAccess_ApiKey_SingleCollection_ById_AndUpdate_CollectionMetadata()
+		{
+			using (var client = new M2XClient(_masterKey))
+			{
+				var collectionParameters = $"{{ \"name\": \"*** PLEASE DELETE ME *** Test Auto Created Collection {DateTime.UtcNow.Ticks}\", \"metadata\": {{ \"{Constants.TestMetadataDefaultFieldName}\": \"{Constants.TestMetadataDefaultFieldValue}\" }} }}";
+				var createCollectionResult = await client.CreateCollection(collectionParameters);
+
+				Assert.IsNotNull(createCollectionResult);
+				Assert.IsFalse(createCollectionResult.Error);
+				Assert.IsFalse(createCollectionResult.ServerError);
+				Assert.IsNull(createCollectionResult.WebError);
+				Assert.IsFalse(string.IsNullOrWhiteSpace(createCollectionResult.Raw));
+
+				var collectionData = JsonConvert.DeserializeObject<Collection>(createCollectionResult.Raw);
+				var collection = client.Collection(collectionData.id);
+
+				var updateMetaDataValue = "The man sitting next to the man...";
+				var updateMetaDataParams = $"{{ \"owner\": \"{updateMetaDataValue}\" }}";
+				var result = await collection.UpdateMetadata(updateMetaDataParams);
+				RequestWasProcessedAndReturnedExpectedValue(result);
+
+				var verifyUpdateResult = await collection.Metadata();
+				Assert.IsNotNull(verifyUpdateResult);
+				Assert.IsFalse(verifyUpdateResult.Error);
+				Assert.IsFalse(verifyUpdateResult.ServerError);
+				Assert.IsNull(verifyUpdateResult.WebError);
+				Assert.IsFalse(string.IsNullOrWhiteSpace(verifyUpdateResult.Raw));
+				Assert.IsTrue(verifyUpdateResult.Raw.Length > 6);
+				Assert.IsTrue(verifyUpdateResult.Raw.ToLowerInvariant().Contains(updateMetaDataValue.ToLowerInvariant()));
+
+
+				var deleteCollectionResult = await collection.Delete();
+				RequestWasProcessedAndReturnedExpectedValue(deleteCollectionResult);
+			}
+		}
+		
+		[TestMethod]
+		public async Task CanAccess_ApiKey_SingleCollection_ById_AndView_SinggleMetadataField()
+		{
+			using (var client = new M2XClient(_masterKey))
+			{
+				var collectionParameters = $"{{ \"name\": \"*** PLEASE DELETE ME *** Test Auto Created Collection {DateTime.UtcNow.Ticks}\", \"metadata\": {{ \"{Constants.TestMetadataDefaultFieldName}\": \"{Constants.TestMetadataDefaultFieldValue}\" }} }}";
+				var createCollectionResult = await client.CreateCollection(collectionParameters);
+
+				Assert.IsNotNull(createCollectionResult);
+				Assert.IsFalse(createCollectionResult.Error);
+				Assert.IsFalse(createCollectionResult.ServerError);
+				Assert.IsNull(createCollectionResult.WebError);
+				Assert.IsFalse(string.IsNullOrWhiteSpace(createCollectionResult.Raw));
+
+				var collectionData = JsonConvert.DeserializeObject<Collection>(createCollectionResult.Raw);
+				var collection = client.Collection(collectionData.id);
+
+				var result = await collection.MetadataField(Constants.TestMetadataDefaultFieldName);
+				Assert.IsNotNull(result);
+				Assert.IsFalse(result.Error);
+				Assert.IsFalse(result.ServerError);
+				Assert.IsNull(result.WebError);
+				Assert.IsFalse(string.IsNullOrWhiteSpace(result.Raw));
+				Assert.IsTrue(result.Raw.Length > 6);
+
+				var deleteCollectionResult = await collection.Delete();
+				RequestWasProcessedAndReturnedExpectedValue(deleteCollectionResult);
+			}
+		}
+
+		[TestMethod]
+		public async Task CanAccess_ApiKey_SingleCollection_ById_AndUpdate_CollectionMetadata_SingleField()
+		{
+			using (var client = new M2XClient(_masterKey))
+			{
+				var collectionParameters = $"{{ \"name\": \"*** PLEASE DELETE ME *** Test Auto Created Collection {DateTime.UtcNow.Ticks}\", \"metadata\": {{ \"{Constants.TestMetadataDefaultFieldName}\": \"{Constants.TestMetadataDefaultFieldValue}\" }} }}";
+				var createCollectionResult = await client.CreateCollection(collectionParameters);
+
+				Assert.IsNotNull(createCollectionResult);
+				Assert.IsFalse(createCollectionResult.Error);
+				Assert.IsFalse(createCollectionResult.ServerError);
+				Assert.IsNull(createCollectionResult.WebError);
+				Assert.IsFalse(string.IsNullOrWhiteSpace(createCollectionResult.Raw));
+
+				var collectionData = JsonConvert.DeserializeObject<Collection>(createCollectionResult.Raw);
+				var collection = client.Collection(collectionData.id);
+
+				var updateMetaDataValue = "The man sitting next to the man...";
+				var updateMetaDataParams = $"{{ \"value\": \"{updateMetaDataValue}\" }}";
+				var result = await collection.UpdateMetadataField(Constants.TestMetadataDefaultFieldName, updateMetaDataParams);
+				RequestWasProcessedAndReturnedExpectedValue(result);
+
+				var verifyUpdateResult = await collection.Metadata();
+				Assert.IsNotNull(verifyUpdateResult);
+				Assert.IsFalse(verifyUpdateResult.Error);
+				Assert.IsFalse(verifyUpdateResult.ServerError);
+				Assert.IsNull(verifyUpdateResult.WebError);
+				Assert.IsFalse(string.IsNullOrWhiteSpace(verifyUpdateResult.Raw));
+				Assert.IsTrue(verifyUpdateResult.Raw.Length > 6);
+				Assert.IsTrue(verifyUpdateResult.Raw.ToLowerInvariant().Contains(updateMetaDataValue.ToLowerInvariant()));
+
+
+				var deleteCollectionResult = await collection.Delete();
+				RequestWasProcessedAndReturnedExpectedValue(deleteCollectionResult);
+			}
+		}
+
+
 		private void ProcessCollectionsSearchResult(string json, bool shouldHaveItems = true)
 		{
 			var resultValues = JsonConvert.DeserializeObject<ApiResponseForCollectionSearch>(json);
@@ -245,7 +380,20 @@ namespace ATTM2X.Tests
 			}
 		}
 
-
+		private void RequestWasProcessedAndReturnedExpectedValue(M2XResponse response, string expectedValue = "Accept")
+		{
+			Assert.IsNotNull(response);
+			Assert.IsFalse(response.Error);
+			Assert.IsFalse(response.ServerError);
+			Assert.IsNull(response.WebError);
+			Assert.IsTrue(string.IsNullOrWhiteSpace(response.Raw));
+			Assert.IsNotNull(response.Headers);
+			Assert.IsTrue(response.Headers.Any());
+			Assert.IsNotNull(response.Headers.First().Value);
+			Assert.IsTrue(response.Headers.First().Value.Any());
+			Assert.AreEqual(expectedValue.ToLowerInvariant(), response.Headers.First().Value.First().ToLowerInvariant());
+		}
+		
 		#region " Response Classes "
 
 		public class ApiResponseForCollectionSearch

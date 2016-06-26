@@ -628,7 +628,7 @@ namespace ATTM2X.Tests
 		public int pending { get; set; }
 	}
 
-		public class Device
+	public class Device
 	{
 		public string url { get; set; }
 		public string name { get; set; }

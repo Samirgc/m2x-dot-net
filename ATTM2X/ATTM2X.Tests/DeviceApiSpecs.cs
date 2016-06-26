@@ -44,7 +44,7 @@ namespace ATTM2X.Tests
 					var updateLocationParms = $"{{ \"name\": \"Test Device Location{i + 1}\", \"latitude\": {(Constants.TestDeviceLatitude + i)}, \"longitude\": {(Constants.TestDeviceLongitude + i)} }}";
 					var resultLocation = testDevice.UpdateLocation(updateLocationParms).Result;
 				}
-				var updateMetadataParms = "{ \"owner\": \"The Testing Guy\" } ";
+				var updateMetadataParms = $"{{ \"{Constants.TestMetadataDefaultFieldName}\": \"{Constants.TestMetadataDefaultFieldValue}\" }} ";
 				var resultMetadata = testDevice.UpdateMetadata(updateMetadataParms);
 
 				var stream01UpdateParms = $"{{ \"values\": [ {{ \"timestamp\": \"{DateTime.Now.AddSeconds(-10).ToString("yyyy-MM-ddTHH:mm:ssZ")}\", \"value\": 98.6 }}, {{ \"timestamp\": \"{DateTime.Now.AddSeconds(-5).ToString("yyyy-MM-ddTHH:mm:ssZ")}\", \"value\": 98.7 }} ] }}";
@@ -1161,13 +1161,13 @@ namespace ATTM2X.Tests
 				var device = client.Device(_testLocationDeviceId);
 				var existingMetadata = await device.Metadata();
 
-				var updateParams = "{ \"owner\": \"Somebody Else\"}";
+				var updateParams = $"{{ \"{Constants.TestMetadataDefaultFieldName}\": \"Somebody Else\"}}";
 				await device.UpdateMetadata(updateParams);
 
 				var result = await device.Metadata();
 
 				// reset value for other tests
-				var resetParams = "{ \"owner\": \"The Testing Guy\"}";
+				var resetParams = $"{{ \"{Constants.TestMetadataDefaultFieldName}\": \"{Constants.TestMetadataDefaultFieldValue}\"}}";
 				await device.UpdateMetadata(resetParams);
 
 				Assert.IsNotNull(result);
@@ -1177,6 +1177,8 @@ namespace ATTM2X.Tests
 				Assert.IsFalse(string.IsNullOrWhiteSpace(result.Raw));
 				Assert.IsTrue(result.Raw.Length > 6);
 				Assert.AreNotEqual(existingMetadata.Raw, result.Raw);
+				Assert.IsTrue(result.Raw.ToLowerInvariant().Contains(Constants.TestMetadataDefaultFieldName.ToLowerInvariant()));
+				Assert.IsTrue(result.Raw.ToLowerInvariant().Contains("somebody else"));
 			}
 		}
 
@@ -1194,7 +1196,7 @@ namespace ATTM2X.Tests
 				var result = await device.Metadata();
 
 				// reset value for other tests
-				var resetParams = "{ \"owner\": \"The Testing Guy\"}";
+				var resetParams = $"{{ \"{Constants.TestMetadataDefaultFieldName}\": \"{Constants.TestMetadataDefaultFieldValue}\"}}";
 				await device.UpdateMetadata(resetParams);
 
 				Assert.IsNotNull(result);
@@ -1204,6 +1206,8 @@ namespace ATTM2X.Tests
 				Assert.IsFalse(string.IsNullOrWhiteSpace(result.Raw));
 				Assert.IsTrue(result.Raw.Length > 6);
 				Assert.AreNotEqual(existingMetadata.Raw, result.Raw);
+				Assert.IsTrue(result.Raw.ToLowerInvariant().Contains(Constants.TestMetadataDefaultFieldName.ToLowerInvariant()));
+				Assert.IsTrue(result.Raw.ToLowerInvariant().Contains("somebody else"));
 			}
 		}
 
@@ -1522,8 +1526,7 @@ namespace ATTM2X.Tests
 				}
 			}
 		}
-
-
+		
 		private void ProcessDeviceSearchResult(string json, bool shouldHaveDevices = true)
 		{
 			var resultValues = JsonConvert.DeserializeObject<ApiResponseForDeviceSearch>(json);
