@@ -26,43 +26,82 @@ namespace ATTM2X.Tests
 		[ClassInitialize]
 		public static void InitializeTestSpecs(TestContext testContext)
 		{
-			_devices = new Dictionary<string, Device>();
-			_testDeviceSerial = $"td-{DateTime.UtcNow.Ticks}";
-
-			using (var client = new M2XClient(_masterKey))
-			{
-				var createDeviceParms = $"{{ \"base_device\": \"d781ab7460136af9db496c97172a6e6c\", \"name\": \"{Constants.TestDeviceNamePrefix} {DateTime.UtcNow.Ticks}\", \"description\": \"{Constants.TestDeviceDescription}\", \"serial\": \"{_testDeviceSerial}\", \"visibility\": \"private\" }}";
-				var createDeviceResult = client.CreateDevice(createDeviceParms).Result;
-				var device = JsonConvert.DeserializeObject<Device>(createDeviceResult.Raw);
-				_devices.Add("primary", device);
-				_testDeviceId = device.id;
-				var testDevice = client.Device(device.id);
-				var updateTagsParms = "{ \"tags\": \"test only\" }";
-				var resultTags = testDevice.Update(updateTagsParms).Result;
-				for (var i = 0; i < 5; i++)
-				{
-					var updateLocationParms = $"{{ \"name\": \"Test Device Location{i + 1}\", \"latitude\": {(Constants.TestDeviceLatitude + i)}, \"longitude\": {(Constants.TestDeviceLongitude + i)} }}";
-					var resultLocation = testDevice.UpdateLocation(updateLocationParms).Result;
-				}
-				var updateMetadataParms = $"{{ \"{Constants.TestMetadataDefaultFieldName}\": \"{Constants.TestMetadataDefaultFieldValue}\" }} ";
-				var resultMetadata = testDevice.UpdateMetadata(updateMetadataParms);
-
-				var stream01UpdateParms = $"{{ \"values\": [ {{ \"timestamp\": \"{DateTime.Now.AddSeconds(-10).ToString("yyyy-MM-ddTHH:mm:ssZ")}\", \"value\": 98.6 }}, {{ \"timestamp\": \"{DateTime.Now.AddSeconds(-5).ToString("yyyy-MM-ddTHH:mm:ssZ")}\", \"value\": 98.7 }} ] }}";
-				var stream01 = testDevice.Stream(Constants.TestStreamName001);
-				var resultStream01Post = stream01.PostValues(stream01UpdateParms).Result;
-				System.Threading.Thread.Sleep(500);
-
-				var stream02UpdateParms = $"{{ \"values\": [ {{ \"timestamp\": \"{DateTime.Now.AddSeconds(-10).ToString("yyyy-MM-ddTHH:mm:ssZ")}\", \"value\": \"normal\" }}, {{ \"timestamp\": \"{DateTime.Now.AddSeconds(-5).ToString("yyyy-MM-ddTHH:mm:ssZ")}\", \"value\": \"normal\" }} ] }}";
-				var stream02 = testDevice.Stream(Constants.TestStreamName002);
-				var resultStream02Post = stream02.PostValues(stream02UpdateParms).Result;
-				System.Threading.Thread.Sleep(500);
-			}
+			GenerateTestDevices();
 		}
 
 		[ClassCleanup]
 		public static void CleanupTestSpecs()
 		{
 			DestroyTestDevices();
+		}
+
+		[TestInitialize]
+		public void InitializeIndividualTest()
+		{
+			Task.Delay(TimeSpan.FromMilliseconds(250));
+			if (string.IsNullOrWhiteSpace(_testDeviceId) || string.IsNullOrWhiteSpace(_testLocationDeviceId))
+			{
+				Assert.Fail($"Test Device ID is now \"{_testDeviceId}\" and Test Location Device ID is now \"{_testLocationDeviceId}\"");
+				CleanupTestSpecs();
+			}
+		}
+
+		private static void GenerateTestDevices()
+		{
+			_devices = new Dictionary<string, Device>();
+			_testDeviceSerial = $"td-{DateTime.UtcNow.Ticks}";
+
+			using (var client = new M2XClient(_masterKey))
+			{
+				foreach (var type in new[] { "cd85543b1ba7299db205470ebb935117", "d781ab7460136af9db496c97172a6e6c" })
+				{
+					var testDeviceSerial = type != "d781ab7460136af9db496c97172a6e6c"
+						 ? $"td-{DateTime.UtcNow.Ticks}"
+						 : _testDeviceSerial;
+
+					var createDeviceEnabledParms = $"{{ \"base_device\": \"{type}\", \"name\": \"{Constants.TestDeviceNamePrefix} {DateTime.UtcNow.Ticks}\", \"description\": \"{Constants.TestDeviceDescription}\", \"serial\": \"{testDeviceSerial}\", \"visibility\": \"private\" }}";
+					var createDeviceResult = client.CreateDevice(createDeviceEnabledParms).Result;
+					System.Threading.Thread.Sleep(500);
+					var device = JsonConvert.DeserializeObject<Device>(createDeviceResult.Raw);
+
+					if (type == "d781ab7460136af9db496c97172a6e6c")
+					{
+						_testDeviceId = device.id;
+						_devices.Add("primary", device);
+					}
+					else if (type == "cd85543b1ba7299db205470ebb935117")
+					{
+						_devices.Add("disabled", device);
+					}
+					else
+					{
+						_devices.Add(type, device);
+					}
+
+					var testDevice = client.Device(device.id);
+					var updateTagsParms = "{ \"tags\": \"test only\" }";
+					var resultTags = testDevice.Update(updateTagsParms).Result;
+					for (var i = 0; i < 5; i++)
+					{
+						var updateLocationParms = $"{{ \"name\": \"Test Device Location{i + 1}\", \"latitude\": {(Constants.TestDeviceLatitude + i)}, \"longitude\": {(Constants.TestDeviceLongitude + i)} }}";
+						var resultLocation = testDevice.UpdateLocation(updateLocationParms).Result;
+					}
+					var updateMetadataParms = $"{{ \"{Constants.TestMetadataDefaultFieldName}\": \"{Constants.TestMetadataDefaultFieldValue}\" }} ";
+					var resultMetadata = testDevice.UpdateMetadata(updateMetadataParms);
+
+					var stream01UpdateParms = $"{{ \"values\": [ {{ \"timestamp\": \"{DateTime.Now.AddSeconds(-10).ToString("yyyy-MM-ddTHH:mm:ssZ")}\", \"value\": 98.6 }}, {{ \"timestamp\": \"{DateTime.Now.AddSeconds(-5).ToString("yyyy-MM-ddTHH:mm:ssZ")}\", \"value\": 98.7 }} ] }}";
+					var stream01 = testDevice.Stream(Constants.TestStreamName001);
+					var resultStream01Post = stream01.PostValues(stream01UpdateParms).Result;
+					System.Threading.Thread.Sleep(200);
+
+					var stream02UpdateParms = $"{{ \"values\": [ {{ \"timestamp\": \"{DateTime.Now.AddSeconds(-10).ToString("yyyy-MM-ddTHH:mm:ssZ")}\", \"value\": \"normal\" }}, {{ \"timestamp\": \"{DateTime.Now.AddSeconds(-5).ToString("yyyy-MM-ddTHH:mm:ssZ")}\", \"value\": \"normal\" }} ] }}";
+					var stream02 = testDevice.Stream(Constants.TestStreamName002);
+					var resultStream02Post = stream02.PostValues(stream02UpdateParms).Result;
+
+					// give things time to settle...
+					System.Threading.Thread.Sleep(250);
+				}
+			}
 		}
 
 		private static void DestroyTestDevices()
@@ -184,7 +223,7 @@ namespace ATTM2X.Tests
 		{
 			using (var client = new M2XClient(_masterKey))
 			{
-				var searchPayloadParameters = $"{{ \"streams\": {{ \"BM\": {{ \"match\": \"normal\" }} }} }}";
+				var searchPayloadParameters = $"{{ \"streams\": {{ \"xj2115\": {{ \"match\": \"normal\" }} }} }}";
 				var result = await client.DeviceCatalogSearch(bodyParms: searchPayloadParameters);
 
 				Assert.IsNotNull(result);
@@ -192,15 +231,16 @@ namespace ATTM2X.Tests
 				Assert.IsFalse(result.ServerError);
 				Assert.IsNull(result.WebError);
 				Assert.IsFalse(string.IsNullOrWhiteSpace(result.Raw));
-				ProcessDeviceSearchResult(result.Raw);
+				ProcessDeviceSearchResult(result.Raw, false);
 			}
 		}
 
-		[TestMethod]
+		[TestMethod] // NOTE: This test must be updated with proper handling of bodyParms is implemented. The commented out portion is left for reference.
 		public async Task CanSearch_DeviceCatalog_ByLocationMatching()
 		{
 			using (var client = new M2XClient(_masterKey))
 			{
+				//var searchPayloadParameters = new { location = new { within_circle = new { center = new { latitude = Constants.TestDeviceLatitude, longitude = Constants.TestDeviceLongitude }, radius = new { mi = 10 } } } };
 				var searchPayloadParameters = $"{{ \"location\": {{ \"within_circle\": {{ \"center\": {{ \"latitude\": {Constants.TestDeviceLatitude}, \"longitude\": {Constants.TestDeviceLongitude} }}, \"radius\": {{ \"mi\": 10 }} }} }} }}";
 				var result = await client.DeviceCatalogSearch(bodyParms: searchPayloadParameters);
 
@@ -209,11 +249,11 @@ namespace ATTM2X.Tests
 				Assert.IsFalse(result.ServerError);
 				Assert.IsNull(result.WebError);
 				Assert.IsFalse(string.IsNullOrWhiteSpace(result.Raw));
-				ProcessDeviceSearchResult(result.Raw);
+				ProcessDeviceSearchResult(result.Raw, false);
 			}
 		}
 
-		[TestMethod]
+		[TestMethod] // NOTE: This test must be updated with proper handling of bodyParms is implemented. The commented out portion is left for reference.
 		public async Task CanSearch_DeviceCatalog_ByMetadataMatching()
 		{
 			using (var client = new M2XClient(_masterKey))
@@ -227,7 +267,7 @@ namespace ATTM2X.Tests
 				Assert.IsFalse(result.ServerError);
 				Assert.IsNull(result.WebError);
 				Assert.IsFalse(string.IsNullOrWhiteSpace(result.Raw));
-				ProcessDeviceSearchResult(result.Raw);
+				ProcessDeviceSearchResult(result.Raw, false);
 			}
 		}
 
@@ -598,12 +638,17 @@ namespace ATTM2X.Tests
 			}
 		}
 
-		[TestMethod]
+		[TestMethod] // NOTE: This test must be updated with proper handling of bodyParms is implemented. The commented out portion is left for reference.
 		public async Task CanAccess_ApiKey_AllDevices_ByStream()
 		{
 			using (var client = new M2XClient(_masterKey))
 			{
-				var searchParameters = "{ \"streams\": { \"BM\": { \"match\": \"normal\" } } }";
+				//var searchParameters = new DeviceValuesSearchParams<TestDeviceConditions> {
+				//	streams = new[] { "BM" },
+				//	conditions = new TestDeviceConditions { testdevicestream = new ValueCondition { match = "normal" } },
+				//};
+
+				var searchParameters = "{ \"streams\": { \"Temp\": { \"gt\": 50, \"lt\": 120 } } }";
 				var result = await client.SearchDevices(bodyParms: searchParameters);
 
 				var probableErrorMessage = "Ensure that the Master key specified allows your IP address.";
@@ -613,7 +658,7 @@ namespace ATTM2X.Tests
 				Assert.IsFalse(result.ServerError, probableErrorMessage);
 				Assert.IsNull(result.WebError, probableErrorMessage);
 				Assert.IsFalse(string.IsNullOrWhiteSpace(result.Raw));
-				ProcessDeviceSearchResult(result.Raw);
+				ProcessDeviceSearchResult(result.Raw, false);
 			}
 		}
 
@@ -1013,7 +1058,7 @@ namespace ATTM2X.Tests
 		{
 			using (var client = new M2XClient(_masterKey))
 			{
-				var device = client.Device(null, "1234notapplicable");
+				var device = client.Device(null, _devices.Count() > 1 ? _devices.Last().Value.serial : _devices["primary"].serial);
 				var result = await device.Details();
 				Assert.IsNotNull(result);
 				Assert.IsFalse(result.Error);
@@ -1526,14 +1571,14 @@ namespace ATTM2X.Tests
 				}
 			}
 		}
-		
+
 		private void ProcessDeviceSearchResult(string json, bool shouldHaveDevices = true)
 		{
 			var resultValues = JsonConvert.DeserializeObject<ApiResponseForDeviceSearch>(json);
 			Assert.IsNotNull(resultValues);
 			if (shouldHaveDevices)
 			{
-				Assert.IsTrue(resultValues.devices.Any(), "If this is a location search, ensure that the bounding coordiates contain the CURRENT coordinates of the expected device!");
+				Assert.IsTrue(resultValues.devices.Any(), $"If this is a location search, ensure that the bounding coordiates contain the CURRENT coordinates of the expected device!{Environment.NewLine}{Environment.NewLine}If this is a disabled device search, please make sure tha that at least one device on your account is set to 'disabled'.");
 			}
 			else
 			{
@@ -1543,18 +1588,6 @@ namespace ATTM2X.Tests
 			{
 				Console.WriteLine($"Device {device.name} ({device.id}) was found.");
 			}
-
-			/*
-		var resultValues = JsonConvert.DeserializeObject<ApiResponseForCatalogSearch>(result.Raw);
-			Assert.IsNotNull(resultValues);
-			Assert.IsTrue(resultValues.values.Any());
-			foreach (var observation in resultValues.values)
-			{
-				var errorMessage = $"Thresholds = {thresholdValueMin} (min) and {thresholdValueMax} (msx); an observation of {observation.value} found in item with timestamp {observation.timestamp}.";
-				Assert.IsTrue(observation.value > thresholdValueMin, errorMessage);
-				Assert.IsTrue(observation.value < thresholdValueMax, errorMessage);
-			}	 
-		 */
 		}
 
 		private void ProcessTagsSearchResult(string json, bool shouldHaveItems = true)
@@ -1763,10 +1796,10 @@ namespace ATTM2X.Tests
 			public string url { get; set; }
 			public string name { get; set; }
 			public string status { get; set; }
-			public object serial { get; set; }
-			public object[] tags { get; set; }
+			public string serial { get; set; }
+			public string[] tags { get; set; }
 			public string visibility { get; set; }
-			public object description { get; set; }
+			public string description { get; set; }
 			public DateTime created { get; set; }
 			public DateTime updated { get; set; }
 			public DateTime last_activity { get; set; }

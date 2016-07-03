@@ -86,33 +86,39 @@ namespace ATTM2X.Tests
 			DestroyTestResources();
 		}
 
+		[TestInitialize]
+		public void InitializeIndividualTest()
+		{
+			Task.Delay(TimeSpan.FromMilliseconds(250));
+		}
+
 		private static void DestroyTestResources()
 		{
 			if ((_devices != null && _devices.Any()) || (_distributions != null && _distributions.Any()))
 			{
 				using (var client = new M2XClient(_masterKey))
 				{
-					if (_devices != null && _devices.Any())
-					{
-						for (var i = _devices.Count(); i > 0; i--)
-						{
-							var _device = _devices.ElementAt(i - 1);
-							var device = client.Device(_device.Value.id);
-							device.Delete();
-							System.Threading.Thread.Sleep(250);
-							_devices.Remove(_device.Key);
-						}
-					}
-
 					if (_distributions != null && _distributions.Any())
 					{
 						for (var i = _distributions.Count(); i > 0; i--)
 						{
 							var _distribution = _distributions.ElementAt(i - 1);
 							var distribution = client.Distribution(_distribution.Value.id);
-							distribution.Delete();
+							var result = distribution.Delete().Result;
 							System.Threading.Thread.Sleep(250);
 							_distributions.Remove(_distribution.Key);
+						}
+					}
+
+					if (_devices != null && _devices.Any())
+					{
+						for (var i = _devices.Count(); i > 0; i--)
+						{
+							var _device = _devices.ElementAt(i - 1);
+							var device = client.Device(_device.Value.id);
+							var result = device.Delete().Result;
+							System.Threading.Thread.Sleep(250);
+							_devices.Remove(_device.Key);
 						}
 					}
 				}
@@ -124,7 +130,11 @@ namespace ATTM2X.Tests
 		[TestMethod]
 		public async Task CanAccess_ApiKey_Distributions()
 		{
-			if(_accountIsNotPro) { return; }
+			if (_accountIsNotPro)
+			{
+				Assert.Inconclusive("The API key used for this test run is not enabled for Full Access. Please upgrade the account or use an API key that has the necessary permissions.");
+				return;
+			}
 
 			using (var client = new M2XClient(_masterKey))
 			{
@@ -142,7 +152,11 @@ namespace ATTM2X.Tests
 		[TestMethod]
 		public async Task CanAccess_ApiKey_SingleDistribution_ById_AndView_AllMetadata()
 		{
-			if (_accountIsNotPro) { return; }
+			if (_accountIsNotPro)
+			{
+				Assert.Inconclusive("The API key used for this test run is not enabled for Full Access. Please upgrade the account or use an API key that has the necessary permissions.");
+				return;
+			}
 
 			using (var client = new M2XClient(_masterKey))
 			{
@@ -161,7 +175,11 @@ namespace ATTM2X.Tests
 		[TestMethod]
 		public async Task CanAccess_ApiKey_SingleDistribution_ById_AndUpdate_DistributionMetadata()
 		{
-			if (_accountIsNotPro) { return; }
+			if (_accountIsNotPro)
+			{
+				Assert.Inconclusive("The API key used for this test run is not enabled for Full Access. Please upgrade the account or use an API key that has the necessary permissions.");
+				return;
+			}
 
 			using (var client = new M2XClient(_masterKey))
 			{
@@ -198,7 +216,11 @@ namespace ATTM2X.Tests
 		[TestMethod]
 		public async Task CanAccess_ApiKey_SingleDistribution_ById_AndView_SingleMetadataField()
 		{
-			if (_accountIsNotPro) { return; }
+			if (_accountIsNotPro)
+			{
+				Assert.Inconclusive("The API key used for this test run is not enabled for Full Access. Please upgrade the account or use an API key that has the necessary permissions.");
+				return;
+			}
 
 			using (var client = new M2XClient(_masterKey))
 			{
@@ -217,7 +239,11 @@ namespace ATTM2X.Tests
 		[TestMethod]
 		public async Task CanAccess_ApiKey_SingleDistribution_ById_AndUpdate_DistributionMetadata_SingleField()
 		{
-			if (_accountIsNotPro) { return; }
+			if (_accountIsNotPro)
+			{
+				Assert.Inconclusive("The API key used for this test run is not enabled for Full Access. Please upgrade the account or use an API key that has the necessary permissions.");
+				return;
+			}
 
 			using (var client = new M2XClient(_masterKey))
 			{
@@ -236,6 +262,70 @@ namespace ATTM2X.Tests
 				Assert.IsFalse(string.IsNullOrWhiteSpace(verifyUpdateResult.Raw));
 				Assert.IsTrue(verifyUpdateResult.Raw.Length > 6);
 				Assert.IsTrue(verifyUpdateResult.Raw.ToLowerInvariant().Contains(updateMetaDataValue.ToLowerInvariant()));
+			}
+		}
+
+		[TestMethod]
+		public async Task CanSearch_ApiKey_Distributions_ByAllowed_GETParameters()
+		{
+			if (_accountIsNotPro)
+			{
+				Assert.Inconclusive("The API key used for this test run is not enabled for Full Access. Please upgrade the account or use an API key that has the necessary permissions.");
+				return;
+			}
+
+			using (var client = new M2XClient(_masterKey))
+			{
+				foreach (var searchType in new object[] { null, "q1", "q2", "page", "limit", "tags", "modified_since", "unmodified_since", "visibility" })
+				{
+					object searchParams = null;
+					if (searchType != null)
+					{
+						switch (searchType.ToString())
+						{
+							case "q1":
+								searchParams = new { q = Constants.TestDeviceNamePrefix };
+								break;
+
+							case "q2":
+								searchParams = new { q = Constants.TestDeviceDescription };
+								break;
+
+							case "page":
+								searchParams = new { page = 1 };
+								break;
+
+							case "limit":
+								searchParams = new { limit = 2 };
+								break;
+
+							case "tags":
+								searchParams = new { tags = "test only" };
+								break;
+
+							case "modified_since":
+								searchParams = new { modified_since = $"{DateTime.Now.AddHours(-1).ToString(Constants.ISO8601_DateStartFormat)}" };
+								break;
+
+							case "unmodified_since":
+								searchParams = new { unmodified_since = $"{DateTime.Now.AddHours(-1).ToString(Constants.ISO8601_DateStartFormat)}" };
+								break;
+
+							case "visibility":
+								searchParams = new { visibility = "private" };
+								break;
+						}
+					}
+
+					var result = await client.SearchDistributions(searchParams);
+
+					Assert.IsNotNull(result);
+					Assert.IsFalse(result.Error);
+					Assert.IsFalse(result.ServerError);
+					Assert.IsNull(result.WebError);
+					Assert.IsFalse(string.IsNullOrWhiteSpace(result.Raw));
+					ProcessDistributionSearchResult(result.Raw, true);
+				}
 			}
 		}
 
