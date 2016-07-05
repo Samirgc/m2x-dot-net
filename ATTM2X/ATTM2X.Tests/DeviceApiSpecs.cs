@@ -53,29 +53,29 @@ namespace ATTM2X.Tests
 
 			using (var client = new M2XClient(_masterKey))
 			{
-				foreach (var type in new[] { "cd85543b1ba7299db205470ebb935117", "d781ab7460136af9db496c97172a6e6c" })
+				foreach (var basisDeviceId in new[] { "cd85543b1ba7299db205470ebb935117", "d781ab7460136af9db496c97172a6e6c" })
 				{
-					var testDeviceSerial = type != "d781ab7460136af9db496c97172a6e6c"
+					var testDeviceSerial = basisDeviceId != "d781ab7460136af9db496c97172a6e6c"
 						 ? $"td-{DateTime.UtcNow.Ticks}"
 						 : _testDeviceSerial;
 
-					var createDeviceEnabledParms = $"{{ \"base_device\": \"{type}\", \"name\": \"{Constants.TestDeviceNamePrefix} {DateTime.UtcNow.Ticks}\", \"description\": \"{Constants.TestDeviceDescription}\", \"serial\": \"{testDeviceSerial}\", \"visibility\": \"private\" }}";
+					var createDeviceEnabledParms = $"{{ \"base_device\": \"{basisDeviceId}\", \"name\": \"{Constants.TestDeviceNamePrefix} {DateTime.UtcNow.Ticks}\", \"description\": \"{Constants.TestDeviceDescription}\", \"serial\": \"{testDeviceSerial}\", \"visibility\": \"private\" }}";
 					var createDeviceResult = client.CreateDevice(createDeviceEnabledParms).Result;
 					System.Threading.Thread.Sleep(500);
 					var device = JsonConvert.DeserializeObject<Device>(createDeviceResult.Raw);
 
-					if (type == "d781ab7460136af9db496c97172a6e6c")
+					if (basisDeviceId == "d781ab7460136af9db496c97172a6e6c")
 					{
 						_testDeviceId = device.id;
 						_devices.Add("primary", device);
 					}
-					else if (type == "cd85543b1ba7299db205470ebb935117")
+					else if (basisDeviceId == "cd85543b1ba7299db205470ebb935117")
 					{
 						_devices.Add("disabled", device);
 					}
 					else
 					{
-						_devices.Add(type, device);
+						_devices.Add(basisDeviceId, device);
 					}
 
 					var testDevice = client.Device(device.id);
