@@ -60,6 +60,12 @@ namespace ATTM2X.Tests
 			DestroyTestDevices();
 		}
 
+		[TestInitialize]
+		public void InitializeIndividualTest()
+		{
+			Task.Delay(TimeSpan.FromMilliseconds(250));
+		}
+
 		private static void DestroyTestDevices()
 		{
 			if (_devices != null && _devices.Any())

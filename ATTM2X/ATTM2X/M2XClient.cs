@@ -175,6 +175,16 @@ namespace ATTM2X
 			return new M2XDistribution(this, distributionId);
 		}
 
+		/// <summary>
+		/// Retrieve the list of device distributions accessible by the authenticated API key that meet the search criteria.
+		///
+		/// https://m2x.att.com/developer/documentation/v2/distribution#Search-Distributions
+		/// </summary>
+		public Task<M2XResponse> SearchDistributions(object parms = null)
+		{
+			return MakeRequest(M2XDistribution.UrlPath + "/search", M2XClientMethod.GET, parms);
+		}
+
 		// Keys API
 
 		/// <summary>
