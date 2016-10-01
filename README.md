@@ -51,7 +51,7 @@ By default, this library targets the following platforms:
 		Windows Phone 8.1
 
 The client library only references assemblies that are supported by those platforms.
-To add or remove target platforms, in Solution Explorer, right-click the ATTM2X Library project name, and select ```Properties``` then in the Library tab in the Targeting section click ```Change```.
+To add or remove target platforms, in Solution Explorer, right-click the ATTM2X Library project name, and select **```Properties```** then in the Library tab in the Targeting section click **```Change```**.
 
 Library structure
 ==========================
@@ -67,7 +67,7 @@ Read more about M2X API keys in the [API Keys](https://m2x.att.com/developer/doc
 
  m2xApiEndPoint - optional parameter. You don't need to pass it unless you want to connect to a different API endpoint.
 
- Client class provides access to API calls returning lists of the following API objects: devices, distributions, keys, charts.
+ Client class provides access to API calls returning lists of the following API objects: collections, commands, devices, distributions, jobs, keys.
  There are also a number of methods allowing you to get an instance of an individual API object by providing its id or name as a parameter.
  Refer to the documentation on each class for further usage instructions.
 
@@ -100,31 +100,37 @@ Example
 	using ATTM2X.Classes;
 
 	M2XResponse response = client.Keys().Result;
-	var keyList = response.Json<KeyList>();
+	KeyList keyList = response.Json<KeyList>();
+	
 	Console.WriteLine("Number of keys is " + keyList.keys.Length);
 ```
  - Get an instance of a device and its location details:
 
 ```csharp
+	using ATTM2X.Classes;
+	
 	M2XDevice device = client.Device("[Device id]");
-	response = device.Location().Result;
-	var location = response.Json<LocationDetails>();
+	M2XResponse response = device.Location().Result;
+	LocationDetails location = response.Json<LocationDetails>();
+	
 	Console.WriteLine("Location name is " + location.name);
 ```
 
  - Create a new device, stream and put current value into it:
 
 ```csharp
-	response = m2x.CreateDevice(new DeviceParams {
+	using ATTM2X.Classes;
+	
+	M2XResponse response = m2x.CreateDevice(new DeviceParams {
 		name = "[Device name]",
 		visibility = M2XVisibility.Public,
 	}).Result;
 
-	var deviceDetails = response.Json<DeviceDetails>();
-	device = m2x.Device(deviceDetails.id);
+	DeviceDetails deviceDetails = response.Json<DeviceDetails>();
+	M2XDevice device = m2x.Device(deviceDetails.id);
 
 	M2XStream stream = device.Stream("[Stream name]");
-	response = stream.Update(new StreamParams	{
+	response = stream.Update(new StreamParams {
 		type = M2XStreamType.Numeric,
 		unit = new StreamUnit { label = "points", symbol = "pt" },
 	}).Result;
