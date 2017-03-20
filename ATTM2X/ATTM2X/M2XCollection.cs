@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace ATTM2X
 {
+
 	/// <summary>
-	/// Wrapper for AT&T M2X Collections API
-	/// https://m2x.att.com/developer/documentation/v2/collections
+	/// Wrapper for AT&T M2X <a href="https://m2x.att.com/developer/documentation/v2/collections">Collection API</a>
 	/// </summary>
 	public sealed class M2XCollection : M2XClassWithMetadata
 	{
@@ -30,30 +30,30 @@ namespace ATTM2X
 		}
 
 		/// <summary>
-		/// Retrieve a list of collections accessible by the authenticated user.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/collections#List-collections
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/collections#List-collections">List Collections</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> Collections(object parms = null)
 		{
 			return MakeRequest(UrlPath, M2XClientMethod.GET, parms);
 		}
 
 		/// <summary>
-		/// Create a new collection.
-		/// 
-		/// https://m2x.att.com/developer/documentation/v2/collections#Create-Collection
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/collections#Create-Collection">Create Collection</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> CreateCollection(object parms)
 		{
 			return MakeRequest(UrlPath, M2XClientMethod.POST, parms);
 		}
 
 		/// <summary>
-		/// Add an existing Device to the current Collection
-		///
-		/// https://m2x.att.com/developer/documentation/v2/collections#Add-device-to-collection
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/collections#Add-device-to-collection">Add device to collection</a> endpoint
 		/// </summary>
+		/// <param name="deviceId">Device ID to be added</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> AddDevice(string deviceId)
 		{
 			var path = BuildPath($"{M2XDevice.UrlPath}/{deviceId}");
@@ -61,10 +61,10 @@ namespace ATTM2X
 		}
 
 		/// <summary>
-		/// Remove a Device fro the current Collection
-		///
-		/// https://m2x.att.com/developer/documentation/v2/collections#Remove-device-from-collection
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/collections#Remove-device-from-collection">Remove device from collection</a> endpoint
 		/// </summary>
+		/// <param name="deviceId">Device ID to be removed</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> RemoveDevice(string deviceId)
 		{
 			var path = BuildPath($"{M2XDevice.UrlPath}/{deviceId}");

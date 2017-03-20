@@ -5,8 +5,7 @@ using System.Threading.Tasks;
 namespace ATTM2X
 {
 	/// <summary>
-	/// Wrapper for AT&T M2X Keys API
-	/// https://m2x.att.com/developer/documentation/v2/keys
+	/// Wrapper for AT&T M2X <a href="https://m2x.att.com/developer/documentation/v2/keys">Keys API</a>
 	/// </summary>
 	public sealed class M2XKey : M2XClass
 	{
@@ -29,10 +28,9 @@ namespace ATTM2X
 		}
 
 		/// <summary>
-		/// Regenerate the specified key.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/keys#Regenerate-Key
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/keys#Regenerate-Key">Regenerate Key</a> endpoint
 		/// </summary>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> Regenerate()
 		{
 			return MakeRequest("/regenerate", M2XClientMethod.POST);

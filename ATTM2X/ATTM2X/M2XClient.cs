@@ -11,10 +11,26 @@ using System.Threading.Tasks;
 
 namespace ATTM2X
 {
+
 	/// <summary>
-	/// Wrapper for AT&T M2X API
-	/// https://m2x.att.com/developer/documentation/v2/overview
+	/// Wrapper for <a href="https://m2x.att.com/developer/documentation/v2/overview">AT&T M2X API</a>
 	/// </summary>
+
+	/// \mainpage .NET toolkit for the <a href="https://m2x.att.com/developer/documentation/v2/overview">AT&T M2X API</a>
+	///
+	/// View the <a href="https://github.com/attm2x/m2x-dot-net/blob/master/README.md">M2X .NET Client README</a> for usage details
+	///
+	/// All methods in this client library require an API Key for authentication. There are multiple types of API Keys which provide granular access to your M2X resources. Please review the <a href="https://m2x.att.com/developer/documentation/v2/overview#API-Keys">API Keys documentation</a> for more details on the different types of keys available
+	///
+	/// If an invalid API Key is utilized, you will receive the following error when calling client methods:
+	///
+	/// ```javascript
+	/// >>>client.method(...)
+	/// Traceback (most recent call last):
+	/// ...
+	/// requests.exceptions.HTTPError: 401 Client Error: Unauthorized
+	/// ```
+
 	public sealed class M2XClient : IDisposable
 	{
 		public const string DateTimeFormat = "yyyy-MM-ddTHH:mm:ss.fffZ";
@@ -74,207 +90,203 @@ namespace ATTM2X
 			}
 		}
 
-		// Device API
-
 		/// <summary>
-		/// List the catalog of public Devices.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/device#List-Public-Devices-Catalog
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#List-Public-Devices-Catalog">List Public Devices Catalog</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> DeviceCatalog(object parms = null)
 		{
 			return MakeRequest(M2XDevice.UrlPath + "/catalog", M2XClientMethod.GET, parms);
 		}
 
 		/// <summary>
-		/// Search the catalog of public Devices.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/device#Search-Public-Devices-Catalog
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#Search-Public-Devices-Catalog">Search Public Devices Catalog</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <param name="bodyParms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> DeviceCatalogSearch(object parms = null, object bodyParms = null)
 		{
 			return MakeRequest(M2XDevice.UrlPath + "/catalog/search", bodyParms == null ? M2XClientMethod.GET : M2XClientMethod.POST, parms, bodyParms);
 		}
 
 		/// <summary>
-		/// Retrieve the list of devices accessible by the authenticated API key.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/device#List-Devices
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#List-Devices">List Devices Catalog</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> Devices(object parms = null)
 		{
 			return MakeRequest(M2XDevice.UrlPath, M2XClientMethod.GET, parms);
 		}
 
 		/// <summary>
-		/// Retrieve the list of devices accessible by the authenticated API key that meet the search criteria.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/device#Search-Devices
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#Search-Devices">Search Devices</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <param name="bodyParms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> SearchDevices(object parms = null, object bodyParms = null)
 		{
 			return MakeRequest(M2XDevice.UrlPath + "/search", bodyParms == null ? M2XClientMethod.GET : M2XClientMethod.POST, parms, bodyParms);
 		}
 
 		/// <summary>
-		/// List Device Tags
-		/// Retrieve the list of device tags for the authenticated user.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/device#List-Device-Tags
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#List-Device-Tags">List Devices Tags</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> DeviceTags(object parms = null)
 		{
 			return MakeRequest(M2XDevice.UrlPath + "/tags", M2XClientMethod.GET, parms);
 		}
 
 		/// <summary>
-		/// Create a new device
-		///
-		/// https://m2x.att.com/developer/documentation/v2/device#Create-Device
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#Create-Device">Create Devices</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> CreateDevice(object parms)
 		{
 			return MakeRequest(M2XDevice.UrlPath, M2XClientMethod.POST, parms);
 		}
 
 		/// <summary>
-		/// Get a wrapper to access an existing Device.
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#View-Device-Details">View Device Details</a> endpoint
 		/// </summary>
+		/// <param name="deviceId">Device ID to be retrieved</param>
+		/// <param name="serial">Serial ID of the device</param>
+		/// <returns>M2XDevice - The retrieved device details</returns>
 		public M2XDevice Device(string deviceId, string serial = null)
 		{
 			return new M2XDevice(this, deviceId, serial);
 		}
 
-		// Distribution API
-
 		/// <summary>
-		/// Retrieve list of device distributions accessible by the authenticated API key.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/distribution#List-Distributions
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/distribution#List-Distributions">List Distributions</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> Distributions(object parms = null)
 		{
 			return MakeRequest(M2XDistribution.UrlPath, M2XClientMethod.GET, parms);
 		}
 
 		/// <summary>
-		/// Create a new device distribution
-		///
-		/// https://m2x.att.com/developer/documentation/v2/distribution#Create-Distribution
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/distribution#Create-Distribution">Create Distribution</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> CreateDistribution(object parms)
 		{
 			return MakeRequest(M2XDistribution.UrlPath, M2XClientMethod.POST, parms);
 		}
-
 		/// <summary>
-		/// Get a wrapper to access an existing device distribution.
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/distribution#View-Distribution-Details">View Distribution Details</a> endpoint
 		/// </summary>
+		/// <param name="deviceId">Distribution ID to be retrieved</param>
+		/// <returns>M2XDistribution - The retrieved distribution details</returns>
 		public M2XDistribution Distribution(string distributionId)
 		{
 			return new M2XDistribution(this, distributionId);
 		}
 
 		/// <summary>
-		/// Retrieve the list of device distributions accessible by the authenticated API key that meet the search criteria.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/distribution#Search-Distributions
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/distribution#Search-Distributions">Search Distributions</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> SearchDistributions(object parms = null)
 		{
 			return MakeRequest(M2XDistribution.UrlPath + "/search", M2XClientMethod.GET, parms);
 		}
 
-		// Keys API
-
 		/// <summary>
-		/// Retrieve list of keys associated with the specified account.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/keys#List-Keys
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/keys#List-Keys">List Keys</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> Keys(object parms = null)
 		{
 			return MakeRequest(M2XKey.UrlPath, M2XClientMethod.GET, parms);
 		}
 
 		/// <summary>
-		/// Create a new key associated with the specified account.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/keys#Create-Key
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/keys#Create-Key">Create Key</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> CreateKey(object parms)
 		{
 			return MakeRequest(M2XKey.UrlPath, M2XClientMethod.POST, parms);
 		}
 
 		/// <summary>
-		/// Get a wrapper to access an existing key associated with the specified account.
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/keys#View-Key-Details">View Key Details</a> endpoint
 		/// </summary>
+		/// <param name="key">Key associated with a developer account</param>
+		/// <returns>M2XKey - The retrieved key details</returns>
 		public M2XKey Key(string key)
 		{
 			return new M2XKey(this, key);
 		}
 
-		// Collections API
-
 		/// <summary>
-		/// Retrieve a list of collections accessible by the authenticated user.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/collections#List-collections
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/collections#List-collections">List collections</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> Collections(object parms = null)
 		{
 			return MakeRequest(M2XCollection.UrlPath, M2XClientMethod.GET, parms);
 		}
 
 		/// <summary>
-		/// Create a new collection.
-		/// 
-		/// https://m2x.att.com/developer/documentation/v2/collections#Create-Collection
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/collections#Create-Collection">Create collection</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> CreateCollection(object parms)
 		{
 			return MakeRequest(M2XCollection.UrlPath, M2XClientMethod.POST, parms);
 		}
 
 		/// <summary>
-		/// Get a wrapper to access an existing Collection.
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/collections#View-Collection-Details">View Collection Details</a> endpoint
 		/// </summary>
+		/// <param name="collectionId">Collection ID to be retrieved</param>
+		/// <returns>M2XCollection - The retrieved collection details</returns>
 		public M2XCollection Collection(string collectionId)
 		{
 			return new M2XCollection(this, collectionId);
 		}
 
-		// Jobs API
-
 		/// <summary>
-		/// Retrieve the list of the most recent jobs that belong to the authenticated user.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/jobs#List-Jobs
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/jobs#List-Jobs">List Jobs</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> Jobs(object parms = null)
 		{
 			return MakeRequest("/jobs", M2XClientMethod.GET, parms);
 		}
 
 		/// <summary>
-		/// Retrieve the job details.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/jobs#View-Job-Details
-		/// https://m2x.att.com/developer/documentation/v2/jobs#View-Job-Results
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/jobs#View-Job-Details">View Job Details</a>, <a href="https://m2x.att.com/developer/documentation/v2/jobs#View-Job-Results">View Job Results</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> JobDetails(string jobId)
 		{
 			return MakeRequest("/jobs/" + WebUtility.UrlEncode(jobId));
 		}
 
-		// Time API
-
 		/// <summary>
-		/// Returns M2X servers' time.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/time
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/time">Time API</a> endpoint
 		/// </summary>
+		/// <param name="format">Time format to retrieve server time</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> Time(string format = null)
 		{
 			string path = "/time";
@@ -283,43 +295,41 @@ namespace ATTM2X
 			return MakeRequest(path);
 		}
 
-		// Commands API
-
 		/// <summary>
-		/// Retrieve the list of recent commands sent by the current user (as given by the API key).
-		///
-		/// https://m2x.att.com/developer/documentation/v2/commands#List-Sent-Commands
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/commands#List-Sent-Commands">List Sent Commands</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> Commands(object parms = null)
 		{
 			return MakeRequest("/commands", M2XClientMethod.GET, parms);
 		}
 
 		/// <summary>
-		/// Send a command with the given name to the given target devices.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/commands#Send-Command
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/commands#Send-Command">Send Command</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> SendCommand(object parms)
 		{
 			return MakeRequest("/commands", M2XClientMethod.POST, parms);
 		}
 
 		/// <summary>
-		/// Get details of a sent command including the delivery information for all devices that were targetted by the command at the time it was sent.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/commands#View-Command-Details
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/commands#View-Command-Details">View Command Details</a> endpoint
 		/// </summary>
+		/// <param name="commandId">Command ID to be retrieved</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> CommandDetails(string commandId)
 		{
 			return MakeRequest("/commands/" + WebUtility.UrlEncode(commandId));
 		}
 
-		// Common
-
 		/// <summary>
-		/// Formats a DateTime value to an ISO8601 timestamp.
+		/// Method for Formats a DateTime value to an ISO8601 timestamp.
 		/// </summary>
+		/// <param name="dateTime">DateTime.</param>
+		/// <returns>string - timestamp in ISO 8601 format</returns>
 		public static string DateTimeToString(DateTime dateTime)
 		{
 			return dateTime.ToString(DateTimeFormat);
@@ -330,6 +340,7 @@ namespace ATTM2X
 		/// </summary>
 		/// <param name="path">AT&T M2X API url path</param>
 		/// <param name="parms">parameters to build url query</param>
+		/// <returns>string - Url to AT&T M2X API with optional query parameters</returns>
 		public string BuildUrl(string path, object parms = null)
 		{
 			string fullUrl = this.EndPoint + path;
@@ -348,9 +359,8 @@ namespace ATTM2X
 		/// <param name="path">API path</param>
 		/// <param name="method">HTTP method</param>
 		/// <param name="parms">Query string (for GET and DELETE) or body (for POST and PUT) parameters</param>
-		/// <param name="addBodyParms">Additional body parameters, if specified, the parms will be treated as query parameters.
-		/// The passed object will be serialized into a JSON string. In case of a string passed it will be treated as a valid JSON string.</param>
-		/// <returns>The request and response data from M2X server</returns>
+		/// <param name="addBodyParms">Additional body parameters, if specified, the parms will be treated as query parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public async Task<M2XResponse> MakeRequest(
 			string path, M2XClientMethod method = M2XClientMethod.GET, object parms = null, object addBodyParms = null)
 		{
