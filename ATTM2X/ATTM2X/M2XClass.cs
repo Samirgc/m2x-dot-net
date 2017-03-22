@@ -21,7 +21,7 @@ namespace ATTM2X
 		}
 
 		/// <summary>
-		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#View-Device-Details">View Device Details</a>, <a href="https://m2x.att.com/developer/documentation/v2/distribution#View-Distribution-Details">View Distribution Details</a>, <a href="https://m2x.att.com/developer/documentation/v2/keys#View-Key-Details">View Key Details</a>, <a href="https://m2x.att.com/developer/documentation/v2/device#View-Data-Stream">View Device Data Stream</a>, <a href="https://m2x.att.com/developer/documentation/v2/distribution#View-Data-Stream">View Distribution Data Stream</a> endpoint
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#View-Device-Details">View Device Details</a>, <a href="https://m2x.att.com/developer/documentation/v2/distribution#View-Distribution-Details">View Distribution Details</a>, <a href="https://m2x.att.com/developer/documentation/v2/keys#View-Key-Details">View Key Details</a>, <a href="https://m2x.att.com/developer/documentation/v2/device#View-Data-Stream">View Data Stream</a>(Device), <a href="https://m2x.att.com/developer/documentation/v2/distribution#View-Data-Stream">View Data Stream</a>(Distribution) endpoint
 		/// </summary>
 		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> Details()
@@ -30,7 +30,7 @@ namespace ATTM2X
 		}
 
 		/// <summary>
-		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#Update-Device-Details">Update Device Details</a>, <a href="https://m2x.att.com/developer/documentation/v2/distribution#Update-Distribution-Details">Update Distribution Details</a>, <a href="https://m2x.att.com/developer/documentation/v2/keys#Update-Key">Update Key</a>, <a href="https://m2x.att.com/developer/documentation/v2/device#Create-Update-Data-Stream">Create/Update Device Data Stream</a>, <a href="https://m2x.att.com/developer/documentation/v2/distribution#Create-Update-Data-Stream">Create/Update Distribution Data Stream</a> endpoint
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#Update-Device-Details">Update Device Details</a>, <a href="https://m2x.att.com/developer/documentation/v2/distribution#Update-Distribution-Details">Update Distribution Details</a>, <a href="https://m2x.att.com/developer/documentation/v2/keys#Update-Key">Update Key</a>, <a href="https://m2x.att.com/developer/documentation/v2/device#Create-Update-Data-Stream">Create/Update Data Stream</a>(Device), <a href="https://m2x.att.com/developer/documentation/v2/distribution#Create-Update-Data-Stream">Create/Update Data Stream</a>(Distribution) endpoint
 		/// </summary>
 		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
 		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
@@ -40,7 +40,7 @@ namespace ATTM2X
 		}
 
 		/// <summary>
-		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#Delete-Device">Delete Device</a>, <a href="https://m2x.att.com/developer/documentation/v2/distribution#Delete-Distribution">Delete Distribution</a>, <a href="https://m2x.att.com/developer/documentation/v2/keys#Delete-Key">Delete Key</a>, <a href="https://m2x.att.com/developer/documentation/v2/device#Delete-Data-Stream">Delete Data Stream</a>, <a href="https://m2x.att.com/developer/documentation/v2/distribution#Delete-Data-Stream">Delete Data Stream</a> endpoint
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#Delete-Device">Delete Device</a>, <a href="https://m2x.att.com/developer/documentation/v2/distribution#Delete-Distribution">Delete Distribution</a>, <a href="https://m2x.att.com/developer/documentation/v2/keys#Delete-Key">Delete Key</a>, <a href="https://m2x.att.com/developer/documentation/v2/device#Delete-Data-Stream">Delete Data Stream</a>(Device), <a href="https://m2x.att.com/developer/documentation/v2/distribution#Delete-Data-Stream">Delete Data Stream</a>(Distribution) endpoint
 		/// </summary>
 		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public virtual Task<M2XResponse> Delete()

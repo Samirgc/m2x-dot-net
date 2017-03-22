@@ -30,7 +30,7 @@ namespace ATTM2X
 		/// <summary>
 		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/charts#Render-Chart">Render Chart</a> endpoint
 		/// </summary>
-		/// <param name="format">String.</param>
+		/// <param name="format">Supported formats are png and svg</param>
 		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
 		/// <returns>String - Response status and content type</returns>
 		public string RenderUrl(string format, object parms = null)

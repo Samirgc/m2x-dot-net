@@ -112,7 +112,7 @@ namespace ATTM2X
 		}
 
 		/// <summary>
-		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#List-Devices">List Devices Catalog</a> endpoint
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#List-Devices">List Devices</a> endpoint
 		/// </summary>
 		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
 		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
@@ -143,7 +143,7 @@ namespace ATTM2X
 		}
 
 		/// <summary>
-		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#Create-Device">Create Devices</a> endpoint
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#Create-Device">Create Device</a> endpoint
 		/// </summary>
 		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
 		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
