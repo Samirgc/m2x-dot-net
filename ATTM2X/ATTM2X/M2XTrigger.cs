@@ -7,7 +7,7 @@ namespace ATTM2X
 {
 
 	/// <summary>
-	/// Wrapper for AT&T M2X <a href="https://m2x.att.com/developer/documentation/v2/triggers">Trigger</a>
+	/// Wrapper for AT&T M2X <a href="https://m2x.att.com/developer/documentation/v2/triggers">Trigger API</a>
 	/// </summary>
 	public sealed class M2XTrigger : M2XClass
 	{

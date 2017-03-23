@@ -6,7 +6,7 @@ namespace ATTM2X
 {
 
 	/// <summary>
-	/// Wrapper for AT&T M2X <a href="https://m2x.att.com/developer/documentation/v2/device">Device Stream</a>
+	/// Wrapper for AT&T M2X <a href="https://m2x.att.com/developer/documentation/v2/device">Device API</a>
 	/// </summary>
 	public sealed class M2XStream : M2XClass
 	{

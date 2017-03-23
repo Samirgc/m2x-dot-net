@@ -13,7 +13,7 @@ namespace ATTM2X
 {
 
 	/// <summary>
-	/// Wrapper for <a href="https://m2x.att.com/developer/documentation/v2/overview">AT&T M2X API</a>
+	/// Wrapper for AT&T <a href="https://m2x.att.com/developer/documentation/v2/overview">M2X API</a>
 	/// </summary>
 
 	/// \mainpage .NET toolkit for the <a href="https://m2x.att.com/developer/documentation/v2/overview">AT&T M2X API</a>
@@ -22,14 +22,8 @@ namespace ATTM2X
 	///
 	/// All methods in this client library require an API Key for authentication. There are multiple types of API Keys which provide granular access to your M2X resources. Please review the <a href="https://m2x.att.com/developer/documentation/v2/overview#API-Keys">API Keys documentation</a> for more details on the different types of keys available
 	///
-	/// If an invalid API Key is utilized, you will receive the following error when calling client methods:
+	/// If an invalid API Key is utilized, you will receive the HTTP Error 401 - Unauthorized.
 	///
-	/// ```javascript
-	/// >>>client.method(...)
-	/// Traceback (most recent call last):
-	/// ...
-	/// requests.exceptions.HTTPError: 401 Client Error: Unauthorized
-	/// ```
 
 	public sealed class M2XClient : IDisposable
 	{
@@ -104,7 +98,7 @@ namespace ATTM2X
 		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#Search-Public-Devices-Catalog">Search Public Devices Catalog</a> endpoint
 		/// </summary>
 		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
-		/// <param name="bodyParms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <param name="bodyParms">Query parameters passed as keyword arguments that will be added request as POST parameters. View M2X API Docs for listing of available parameters</param>
 		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> DeviceCatalogSearch(object parms = null, object bodyParms = null)
 		{
@@ -125,7 +119,7 @@ namespace ATTM2X
 		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#Search-Devices">Search Devices</a> endpoint
 		/// </summary>
 		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
-		/// <param name="bodyParms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <param name="bodyParms">Query parameters passed as keyword arguments that will be added request as POST parameters. View M2X API Docs for listing of available parameters</param>
 		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> SearchDevices(object parms = null, object bodyParms = null)
 		{
@@ -185,7 +179,7 @@ namespace ATTM2X
 		/// <summary>
 		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/distribution#View-Distribution-Details">View Distribution Details</a> endpoint
 		/// </summary>
-		/// <param name="deviceId">Distribution ID to be retrieved</param>
+		/// <param name="distributionId">Distribution ID to be retrieved</param>
 		/// <returns>M2XDistribution - The retrieved distribution details</returns>
 		public M2XDistribution Distribution(string distributionId)
 		{
@@ -275,7 +269,7 @@ namespace ATTM2X
 		/// <summary>
 		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/jobs#View-Job-Details">View Job Details</a>, <a href="https://m2x.att.com/developer/documentation/v2/jobs#View-Job-Results">View Job Results</a> endpoint
 		/// </summary>
-		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <param name="jobId">Job ID to be retrieved</param>
 		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> JobDetails(string jobId)
 		{
@@ -359,7 +353,7 @@ namespace ATTM2X
 		/// <param name="path">API path</param>
 		/// <param name="method">HTTP method</param>
 		/// <param name="parms">Query string (for GET and DELETE) or body (for POST and PUT) parameters</param>
-		/// <param name="addBodyParms">Additional body parameters, if specified, the parms will be treated as query parameters</param>
+		/// <param name="addBodyParms">Additional body parameters, if specified, the parms will be treated as query parameters. The passed object will be serialized into a JSON string. In case of a string passed it will be treated as a valid JSON string.</param>
 		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public async Task<M2XResponse> MakeRequest(
 			string path, M2XClientMethod method = M2XClientMethod.GET, object parms = null, object addBodyParms = null)

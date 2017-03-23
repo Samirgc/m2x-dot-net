@@ -276,7 +276,7 @@ Properties</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="class_a_t_t_m2_x_1_1_m2_x_collection.html" title="Wrapper for AT&amp;T M2X Collection API ">M2XCollection</a> - The retrieved collection details</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="class_a_t_t_m2_x_1_1_m2_x_collection.html" title="Wrapper for AT&amp;T M2X Collections API ">M2XCollection</a> - The retrieved collection details</dd></dl>
 
 </div>
 </div>
@@ -679,7 +679,7 @@ Properties</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">parms</td><td>Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</td></tr>
-    <tr><td class="paramname">bodyParms</td><td>Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</td></tr>
+    <tr><td class="paramname">bodyParms</td><td>Query parameters passed as keyword arguments that will be added request as POST parameters. View M2X API Docs for listing of available parameters</td></tr>
   </table>
   </dd>
 </dl>
@@ -784,7 +784,7 @@ Properties</h2></td></tr>
 <p>Method for <a href="https://m2x.att.com/developer/documentation/v2/distribution#View-Distribution-Details">View Distribution Details</a> endpoint </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">deviceId</td><td>Distribution ID to be retrieved</td></tr>
+    <tr><td class="paramname">distributionId</td><td>Distribution ID to be retrieved</td></tr>
   </table>
   </dd>
 </dl>
@@ -854,7 +854,7 @@ Properties</h2></td></tr>
 <p>Method for <a href="https://m2x.att.com/developer/documentation/v2/jobs#View-Job-Details">View Job Details</a>, <a href="https://m2x.att.com/developer/documentation/v2/jobs#View-Job-Results">View Job Results</a> endpoint </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">parms</td><td>Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</td></tr>
+    <tr><td class="paramname">jobId</td><td>Job ID to be retrieved</td></tr>
   </table>
   </dd>
 </dl>
@@ -1019,7 +1019,7 @@ Properties</h2></td></tr>
     <tr><td class="paramname">path</td><td>API path</td></tr>
     <tr><td class="paramname">method</td><td>HTTP method</td></tr>
     <tr><td class="paramname">parms</td><td>Query string (for GET and DELETE) or body (for POST and PUT) parameters</td></tr>
-    <tr><td class="paramname">addBodyParms</td><td>Additional body parameters, if specified, the parms will be treated as query parameters</td></tr>
+    <tr><td class="paramname">addBodyParms</td><td>Additional body parameters, if specified, the parms will be treated as query parameters. The passed object will be serialized into a JSON string. In case of a string passed it will be treated as a valid JSON string.</td></tr>
   </table>
   </dd>
 </dl>
@@ -1065,7 +1065,7 @@ Properties</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">parms</td><td>Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</td></tr>
-    <tr><td class="paramname">bodyParms</td><td>Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</td></tr>
+    <tr><td class="paramname">bodyParms</td><td>Query parameters passed as keyword arguments that will be added request as POST parameters. View M2X API Docs for listing of available parameters</td></tr>
   </table>
   </dd>
 </dl>
