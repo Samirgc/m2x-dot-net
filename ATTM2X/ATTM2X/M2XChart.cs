@@ -3,9 +3,9 @@ using System.Net;
 
 namespace ATTM2X
 {
+
 	/// <summary>
-	/// Wrapper for AT&T M2X Charts API
-	/// https://m2x.att.com/developer/documentation/v2/charts
+	/// Wrapper for AT&T M2X <a href="https://m2x.att.com/developer/documentation/v2/charts">Charts API</a>
 	/// </summary>
 	public sealed class M2XChart : M2XClass
 	{
@@ -28,13 +28,11 @@ namespace ATTM2X
 		}
 
 		/// <summary>
-		/// Generally used in the src attribute of an <img> html tag.
-		///
-		/// This method is public and therefore it does not require
-		/// the user to authenticate himself using an API key.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/charts#Render-Chart
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/charts#Render-Chart">Render Chart</a> endpoint
 		/// </summary>
+		/// <param name="format">Supported formats are png and svg</param>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>String - Response status and content type</returns>
 		public string RenderUrl(string format, object parms = null)
 		{
 			return this.Client.BuildUrl(BuildPath("." + format), parms);

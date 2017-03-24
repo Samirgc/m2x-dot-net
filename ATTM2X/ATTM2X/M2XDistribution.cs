@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace ATTM2X
 {
+
 	/// <summary>
-	/// Wrapper for AT&T M2X Distribution API
-	/// https://m2x.att.com/developer/documentation/v2/distribution
+	/// Wrapper for AT&T M2X <a href="https://m2x.att.com/developer/documentation/v2/distribution">Distribution API</a>
 	/// </summary>
 	public sealed class M2XDistribution : M2XClassWithMetadata
 	{
@@ -29,38 +29,40 @@ namespace ATTM2X
 		}
 
 		/// <summary>
-		/// Retrieve list of devices added to the specified distribution.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/distribution#List-Devices-from-an-existing-Distribution
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/distribution#List-Devices-from-an-existing-Distribution">List Devices from an existing Distribution</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> Devices(object parms = null)
 		{
 			return MakeRequest(M2XDevice.UrlPath, M2XClientMethod.GET, parms);
 		}
 
 		/// <summary>
-		/// Add a new device to an existing distribution
-		///
-		/// https://m2x.att.com/developer/documentation/v2/distribution#Add-Device-to-an-existing-Distribution
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/distribution#Add-Device-to-an-existing-Distribution">Add Device to an existing Distribution</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> AddDevice(object parms)
 		{
 			return MakeRequest(M2XDevice.UrlPath, M2XClientMethod.POST, parms);
 		}
 
 		/// <summary>
-		/// Retrieve list of data streams associated with the specified distribution.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/distribution#List-Data-Streams
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/distribution#List-Data-Streams">List Data Streams</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> Streams(object parms = null)
 		{
 			return MakeRequest(M2XStream.UrlPath, M2XClientMethod.GET, parms);
 		}
 
 		/// <summary>
-		/// Get a wrapper to access a data stream associated with the specified distribution
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/distribution#View-Data-Stream">View Data Stream</a> endpoint
 		/// </summary>
+		/// <param name="streamName">Name of the stream to be retrieved</param>
+		/// <returns>M2XStream - Data stream details</returns>
 		public M2XStream Stream(string streamName)
 		{
 			return new M2XStream(this, streamName);

@@ -4,10 +4,9 @@ using System.Threading.Tasks;
 
 namespace ATTM2X
 {
+
 	/// <summary>
-	/// Wrapper for AT&T M2X Data Streams API
-	/// https://m2x.att.com/developer/documentation/v2/device
-	/// https://m2x.att.com/developer/documentation/v2/distribution
+	/// Wrapper for AT&T M2X <a href="https://m2x.att.com/developer/documentation/v2/device">Device API</a>
 	/// </summary>
 	public sealed class M2XStream : M2XClass
 	{
@@ -45,21 +44,21 @@ namespace ATTM2X
 		}
 
 		/// <summary>
-		/// Update the current value of the stream.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/device#Update-Data-Stream-Value
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#Update-Data-Stream-Value">Update Data Stream Value</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> UpdateValue(object parms)
 		{
 			return MakeRequest("/value", M2XClientMethod.PUT, parms);
 		}
 
 		/// <summary>
-		/// List values from the stream, sorted in reverse chronological order
-		/// (most recent values first).
-		///
-		/// https://m2x.att.com/developer/documentation/v2/device#List-Data-Stream-Values
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#List-Data-Stream-Values">List Data Stream Values</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <param name="format">String.</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> Values(object parms = null, string format = null)
 		{
 			string path = "/values";
@@ -69,13 +68,11 @@ namespace ATTM2X
 		}
 
 		/// <summary>
-		/// Sample values from the stream, sorted in reverse chronological order
-		/// (most recent values first).
-		///
-		/// This method only works for numeric streams
-		///
-		/// https://m2x.att.com/developer/documentation/v2/device#Data-Stream-Sampling
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#Data-Stream-Sampling">Data Stream Sampling</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <param name="format">String.</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> Sampling(object parms, string format = null)
 		{
 			string path = "/sampling";
@@ -85,33 +82,30 @@ namespace ATTM2X
 		}
 
 		/// <summary>
-		/// Return count, min, max, average and standard deviation stats for the
-		/// values of the stream.
-		///
-		/// This method only works for numeric streams
-		///
-		/// https://m2x.att.com/developer/documentation/v2/device#Data-Stream-Stats
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#Data-Stream-Stats">Data Stream Stats</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> Stats(object parms = null)
 		{
 			return MakeRequest("/stats", M2XClientMethod.GET, parms);
 		}
 
 		/// <summary>
-		/// Post timestamped values to an existing data stream.
-		///
-		/// https://m2x.att.com/developer/documentation/v2/device#Post-Data-Stream-Values
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#Post-Data-Stream-Values">Post Data Stream Values</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> PostValues(object parms)
 		{
 			return MakeRequest("/values", M2XClientMethod.POST, parms);
 		}
 
 		/// <summary>
-		/// Delete values in a stream by a date range
-		///
-		/// https://m2x.com/developer/documentation/v2/device#Delete-Data-Stream-Values
+		/// Method for <a href="https://m2x.att.com/developer/documentation/v2/device#Delete-Data-Stream-Values">Delete Data Stream Values</a> endpoint
 		/// </summary>
+		/// <param name="parms">Query parameters passed as keyword arguments. View M2X API Docs for listing of available parameters</param>
+		/// <returns>M2XResponse - The API response, see M2X API docs for details</returns>
 		public Task<M2XResponse> DeleteValues(object parms)
 		{
 			return MakeRequest("/values", M2XClientMethod.DELETE, parms);
